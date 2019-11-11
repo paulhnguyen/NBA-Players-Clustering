@@ -1,1 +1,3 @@
-# group-9
+# Group-9
+
+-Paul Nguyen
