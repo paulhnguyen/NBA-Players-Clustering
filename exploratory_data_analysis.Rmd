@@ -1,0 +1,30 @@
+---
+title: "Exploratory Data Analysis"
+author: "Paul Nguyen & David Herrero Quevedo"
+date: "11/13/2019"
+output: pdf_document
+---
+
+```{r}
+#load libraries and data
+library(ggplot2)
+library(dplyr)
+library(nbastatR)
+library(tidyr)
+library(tidyverse)
+
+
+#note, following code does not work, i think package uses old syntax 
+#error: Error in unnest_legacy(.) : could not find function "unnest_legacy"
+playerstats <- bref_players_stats(
+                  seasons = 1955,
+                  tables = c("advanced", "totals", "per_game", "per_minute"),
+                  include_all_nba = TRUE,
+                  only_totals = FALSE,
+                  nest_data = FALSE)
+                                  
+teamstats <- bref_teams_stats(seasons = 1955:2018)
+
+
+
+```
