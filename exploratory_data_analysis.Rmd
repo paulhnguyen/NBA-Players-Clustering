@@ -19,7 +19,6 @@ allnbateams <- all_nba_teams(return_message = TRUE) %>%
   
 ```
 
-
 ```{r, cache = T}
 #summary stats for starters, grouped by year and position
 #not using games started, since did not keep track of before 1980
@@ -106,6 +105,7 @@ ggplot(data = thirtygameplayersummary,
 ```
 
 ```{r, message = F}
-teamstats <- teams_annual_stats(modes = c("PerGame"))[,-c(1,2,4,5,11:17)]
-
+all_nbas <- all_nba_teams()
+players <- bref_players_stats(seasons = 1950:2020, tables = c("per_game"), include_all_nba = TRUE)
+all_nbas_withstats <- all_nbas %>% inner_join(players)
 ```
