@@ -5,7 +5,7 @@ date: "11/13/2019"
 output: pdf_document
 ---
 
-```{r}
+```{r, message = FALSE, cache = TRUE}
 #load libraries and data
 library(ggplot2)
 library(dplyr)
@@ -13,18 +13,99 @@ library(nbastatR)
 library(tidyr)
 library(tidyverse)
 
-
-#note, following code does not work, i think package uses old syntax 
-#error: Error in unnest_legacy(.) : could not find function "unnest_legacy"
-playerstats <- bref_players_stats(
-                  seasons = 1955,
-                  tables = c("advanced", "totals", "per_game", "per_minute"),
-                  include_all_nba = TRUE,
-                  only_totals = FALSE,
-                  nest_data = FALSE)
-                                  
-teamstats <- bref_teams_stats(seasons = 1955:2018)
+rotys_table <- bref_awards("Rookie of the Year")
+allnbateams <- all_nba_teams(return_message = TRUE) %>%
+  select(yearSeason, namePlayer, groupPosition)
+  
+```
 
 
+```{r, cache = T}
+#summary stats for starters, grouped by year and position
+#not using games started, since did not keep track of before 1980
+thirtygameplayersummary <- bref_players_stats(seasons = 1955:2020,
+                                  tables = c("per_minute")) %>%
+  filter(countGames >= 30) %>%
+  group_by(yearSeason, groupPosition) %>%
+  summarize(meanFGPct = mean(pctFG),
+            mean3FGPct = mean(pctFG3),
+            meanFGM = mean(fgmPerMinute),
+            meanFGA = mean(fgaPerMinute),
+            mean3FGM = mean(fg3mPerMinute),
+            mean3FGA = mean(fg3aPerMinute),
+            meanFTA = mean(ftaPerMinute),
+            meanFTM = mean(ftmPerMinute),
+            meanORB = mean(orbPerMinute),
+            meanDRB = mean(drbPerMinute),
+            meanAST = mean(astPerMinute),
+            meanSTL = mean(stlPerMinute),
+            meanBLK = mean(blkPerMinute),
+            meanTOV = mean(tovPerMinute),
+            meanPTS = mean(ptsPerMinute))
+#some graphs 
+#fg pct
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanFGPct, color = groupPosition)) +
+  geom_line()
+#3FGPct, see the introduction of 3 point line
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = mean3FGPct, color = groupPosition)) +
+  geom_line()
+#meanFGM
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanFGM, color = groupPosition)) +
+  geom_line()
+#meanFGA
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanFGA, color = groupPosition)) +
+  geom_line()
+#mean3FGM this one seems pretty important
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = mean3FGM, color = groupPosition)) +
+  geom_line()
+#mean3FGAthis one seems pretty important
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = mean3FGA, color = groupPosition)) +
+  geom_line()
+#meanFTA
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanFTA, color = groupPosition)) +
+  geom_line()
+#meanFTM
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanFTM, color = groupPosition)) +
+  geom_line()
+#meanORB
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanORB, color = groupPosition)) +
+  geom_line()
+#meanDRB
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanDRB, color = groupPosition)) +
+  geom_line()
+#meanAST
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanAST, color = groupPosition)) +
+  geom_line()
+#meanSTL
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanSTL, color = groupPosition)) +
+  geom_line()
+#meanBLK
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanBLK, color = groupPosition)) +
+  geom_line()
+#meanTOV
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanTOV, color = groupPosition)) +
+  geom_line()
+#meanPTS
+ggplot(data = thirtygameplayersummary, 
+       mapping = aes(x = yearSeason, y = meanPTS, color = groupPosition)) +
+  geom_line()
+```
+
+```{r, message = F}
+teamstats <- teams_annual_stats(modes = c("PerGame"))[,-c(1,2,4,5,11:17)]
 
 ```
