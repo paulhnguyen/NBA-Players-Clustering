@@ -5,19 +5,37 @@ output: github_document
 
 ## Paul Nguyen & David Herrero-Quevedo
 
+```{r, message = FALSE, cache = TRUE}
+#load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(nbastatR)
+library(tidyr)
+library(tidyverse)
+```
+
+
 ## Data Description
 
 ### Provenance
 We obtained our datasets from basketball-reference.com and stats.nba.com.
 We used the R package `nbastatR` to obtain the data from those websites.
 
-### Unit of observation
-Our unit of observation is a `player`.
-We have data for n number of players (#TODO: need to decide how many players are we going to use)
+### Unit of observation and Variables
+Our unit of observation is a player during one season.
+Our original dataset consists of 21235 observations  and 75 variables, but 
+we've reduced this number to 11695 observations after selecting seasons
+after 1983 and players that have played in at least 30 games in the season.
+We've also taken out some unnecessary variables to make a 11695 observation,
+64 variable dataset.
 
-### Variables
-Each player has a series of variables c
-We have p number of variables (#TODO: need to clean this up)
+```{r, message = FALSE, cache = TRUE}
+players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+players_post1984 <- filter(players, yearSeason >= 1984) %>%
+  filter(countGames > 29)
+```
+
+
 
 ## Data Exploration
 
