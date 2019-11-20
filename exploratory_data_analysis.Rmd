@@ -112,9 +112,8 @@ teamstats <- teams_annual_stats(modes = c("PerGame"))[,-c(1,2,4,5,11:17)]
 
 
 ```{r, message = F, cache = T}
-all_nbas <- all_nba_teams()
-players <- bref_players_stats(seasons = 1950:2020, tables = c("per_game"), include_all_nba = TRUE)
-all_nbas_withstats <- all_nbas %>% inner_join(players)
+players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+all_nbas <- filter(players, isAllNBA == TRUE)
 
 allnbasummary <- all_nbas_withstats %>%
   group_by(yearSeason, groupPosition) %>%
