@@ -105,11 +105,6 @@ ggplot(data = thirtygameplayersummary,
   geom_line()
 ```
 
-```{r, message = F}
-teamstats <- teams_annual_stats(modes = c("PerGame"))[,-c(1,2,4,5,11:17)]
-
-```
-
 
 ```{r, message = F, cache = T}
 players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
@@ -201,7 +196,4 @@ ggplot(data = thirtygameplayersummary,
 ggplot(data = thirtygameplayersummary, 
        mapping = aes(x = yearSeason, y = meanPTS, color = groupPosition)) +
   geom_line()
-
-
-
 ```
