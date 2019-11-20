@@ -1,0 +1,283 @@
+---
+title: "Exploratory Data Analysis"
+output: github_document
+---
+
+## Paul Nguyen & David Herrero-Quevedo
+
+```{r, message = FALSE, cache = TRUE}
+#load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(nbastatR)
+library(tidyr)
+library(tidyverse)
+library(BBmisc)
+```
+
+
+## Data Description
+
+### Provenance
+We obtained our datasets from basketball-reference.com and stats.nba.com.
+We used the R package `nbastatR` to obtain the data from those websites.
+
+### Unit of observation and Variables
+Our unit of observation is a player during one season.
+Our original dataset consists of 21235 observations  and 75 variables, but 
+we've reduced this number to 10223 observations after selecting seasons
+after 1983 and players that have played at least 600 minutes in the season.
+We've also taken out some unnecessary variables to make a 14528 observation,
+64 variable dataset.
+
+```{r, message = FALSE, cache = TRUE}
+#grabbing and filtering data
+players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+players_post1984 <- filter(players, yearSeason >= 1984) 
+ggplot(players_post1984, mapping = aes(x = minutes)) + 
+  geom_histogram() +
+  geom_vline(xintercept = 600)
+players_post1984 <- filter(players_post1984, minutes > 600)
+
+#getting rid of some not useful variables
+drops <- c("slugSeason", "idPlayerNBA", "namePlayerBREF", 
+           "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
+           "urlPlayerPhoto", "urlPlayerStats", "urlPlayerActionPhoto",
+           "isSeasonCurrent","slugPlayerSeason")
+
+players_post1984 <-
+  players_post1984[,!(names(players_post1984) %in% drops)]
+
+```
+
+
+
+## Data Exploration
+
+```{r}
+#some summary statistics
+summarystatistics1984 <- players_post1984 %>%
+  group_by(yearSeason, groupPosition) %>%
+  summarize(meanpctFTRate = mean(pctFTRate),
+            meanpct3PRate = mean(pct3PRate),
+            meanpctFG = mean(pctFG),
+            meanpctFG3 = mean(pctFG3),
+            meanpctFG2 = mean(pctFG2),
+            meanpctEFG = mean(pctEFG),
+            meanpctFT = mean(pctFT),
+            meanfgmPerGame = mean(fgmPerGame),
+            meanfgaPerGame = mean(fgaPerGame),
+            meanfg3mPerGame = mean(fg3mPerGame),
+            meanfg3aPerGame = mean(fg3aPerGame),
+            meanfg2mPerGame = mean(fg2mPerGame),
+            meanfg2aPerGame = mean(fg2aPerGame),
+            meanftmPerGame = mean(ftmPerGame),
+            meanftaPerGame = mean(ftaPerGame),
+            meanptsPerGame = mean(ptsPerGame),
+            meanpctORB = mean(pctORB),
+            meanpctTRB = mean(pctTRB),
+            meanpctDRB = mean(pctDRB),
+            meanorbPerGame = mean(orbPerGame),
+            meandrbPerGame = mean (drbPerGame),
+            meantrbPerGame = mean(trbPerGame),
+            meanpctAST = mean(pctAST),
+            meanpctTOV = mean(pctTOV),
+            meanastPerGame = mean(astPerGame),
+            meantovPerGame = mean(tovPerGame),
+            meanpctSTL = mean(pctSTL),
+            meanpctBLK = mean(pctBLK),
+            meanstlPerGame = mean(stlPerGame),
+            meanblkPerGame = mean(blkPerGame),
+            meanpfPerGame = mean(pfPerGame),
+            meanratioOWS = mean(ratioOWS),
+            meanratioDWS = mean(ratioDWS),
+            meanratioWS = mean(ratioWS),
+            meanratioWSPer48 = mean(ratioWSPer48),
+            meanratioOBPM = mean(ratioOBPM),
+            meanratioDBPM = mean(ratioDBPM),
+            meanratioBPM = mean(ratioBPM),
+            meanratioVORP = mean(ratioVORP),
+            sdpctFTRate = sd(pctFTRate),
+            sdpct3PRate = sd(pct3PRate),
+            sdpctFG = sd(pctFG),
+            sdpctFG3 = sd(pctFG3),
+            sdpctFG2 = sd(pctFG2),
+            sdpctEFG = sd(pctEFG),
+            sdpctFT = sd(pctFT),
+            sdfgmPerGame = sd(fgmPerGame),
+            sdfgaPerGame = sd(fgaPerGame),
+            sdfg3mPerGame = sd(fg3mPerGame),
+            sdfg3aPerGame = sd(fg3aPerGame),
+            sdfg2mPerGame = sd(fg2mPerGame),
+            sdfg2aPerGame = sd(fg2aPerGame),
+            sdftmPerGame = sd(ftmPerGame),
+            sdftaPerGame = sd(ftaPerGame),
+            sdptsPerGame = sd(ptsPerGame),
+            sdpctORB = sd(pctORB),
+            sdpctTRB = sd(pctTRB),
+            sdpctDRB = sd(pctDRB),
+            sdorbPerGame = sd(orbPerGame),
+            sddrbPerGame = sd (drbPerGame),
+            sdtrbPerGame = sd(trbPerGame),
+            sdpctSTL = sd(pctSTL),
+            sdpctBLK = sd(pctBLK),
+            sdstlPerGame = sd(stlPerGame),
+            sdblkPerGame = sd(blkPerGame),
+            sdpfPerGame = sd(pfPerGame),
+            sdratioOWS = sd(ratioOWS),
+            sdratioDWS = sd(ratioDWS),
+            sdratioWS = sd(ratioWS),
+            sdratioWSPer48 = sd(ratioWSPer48),
+            sdratioOBPM = sd(ratioOBPM),
+            sdratioDBPM = sd(ratioDBPM),
+            sdratioBPM = sd(ratioBPM),
+            sdratioVORP = sd(ratioVORP)
+            )
+head(summarystatistics1984)
+
+ggplot(data = summarystatistics1984, mapping = aes(x = yearSeason, y = meanpctFG, color = groupPosition)) + 
+  geom_line()
+
+#taking a look at some stats over time, grouped by year and position
+#fg pct
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanpctFG, color = groupPosition)) +  geom_line()
+#3FGPct, see the introduction of 3 point line
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanpctFG3,
+                     color = groupPosition)) +
+  geom_line()
+#meanFGM
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfgmPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanFGA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfgaPerGame,
+                     color = groupPosition)) +
+  geom_line()
+
+#mean3FGM 
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfg3mPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#mean3FGA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfg3aPerGame, color = groupPosition)) +
+  geom_line()
+#meanFTA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanftaPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanFTM
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanftmPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanORB
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanorbPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanDRB
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meandrbPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanAST
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanastPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanSTL
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanstlPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanBLK
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanblkPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanTOV
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meantovPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanPTS
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanptsPerGame,
+                     color = groupPosition)) +
+  geom_line()
+
+
+```
+
+
+### Missingness
+(#TODO: need to complete)
+
+### Univariate analysis of the response
+Numerical, graphical (#TODO: need to complete)
+
+### Bi-, trivariate analysis of the response
+graphical (#TODO: need to complete)
+
+### Variables used:
+#### Shooting:
+- pctFTRate
+- pct3PRate
+- pctFG
+- pctFG3
+- pctFG2
+- pctEFG
+- pctFT
+- fgmPerGame
+- fgaPerGame
+- fg3mPerGame
+- fg3aPerGame
+- fg2mPerGame
+- fg2aPerGame
+- ftmPerGame
+- ftaPerGame
+- ptsPerGame
+
+#### Rebounds
+- pctORB
+- pctTRB
+- pctDRB
+- orbPerGame
+- drbPerGame
+- trbPerGame
+
+#### Passing
+- pctAST
+- pctTOV
+- astPerGame
+- tovPerGame
+
+#### Defense
+- pctSTL
+- pctBLK
+- stlPerGame
+- blkPerGame
+- pfPerGame
+
+#### Efficiency stats
+- ratioOWS
+- ratioDWS
+- ratioWS
+- ratioWSPer48
+- ratioOBPM
+- ratioDBPM
+- ratioBPM
+- ratioVORP
+
+#### Other
+- pctUSG
+- countTeamsPlayerSeason
+- countGamesStarted
+- minutesPerGame

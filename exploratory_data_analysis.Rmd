@@ -12,6 +12,7 @@ library(dplyr)
 library(nbastatR)
 library(tidyr)
 library(tidyverse)
+library(BBmisc)
 
 rotys_table <- bref_awards("Rookie of the Year")
 allnbateams <- all_nba_teams(return_message = TRUE) %>%
@@ -110,8 +111,16 @@ ggplot(data = thirtygameplayersummary,
 #made a new chunk for our "final" dataset
 players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
 
-players_post1984 <- filter(players, yearSeason >= 1984) %>%
-  filter(countGames > 29)
+
+players_post1984 <- filter(players, yearSeason >= 1984)
+
+ggplot(players_post1984, mapping = aes(x = minutes)) + 
+  geom_histogram() +
+  geom_vline(xintercept = 600)
+
+players_post1984 <- filter(players_post1984, minutes >= 600)  
+
+
 
 #getting rid of some not useful variables
 drops <- c("slugSeason", "idPlayerNBA", "namePlayerBREF", 
@@ -124,6 +133,7 @@ players_post1984 <-
 
 #some summary statistics
 summarystatistics1984 <- players_post1984 %>%
+  group_by(yearSeason, groupPosition) %>%
   summarize(meanpctFTRate = mean(pctFTRate),
             meanpct3PRate = mean(pct3PRate),
             meanpctFG = mean(pctFG),
@@ -146,6 +156,10 @@ summarystatistics1984 <- players_post1984 %>%
             meanorbPerGame = mean(orbPerGame),
             meandrbPerGame = mean (drbPerGame),
             meantrbPerGame = mean(trbPerGame),
+            meanpctAST = mean(pctAST),
+            meanpctTOV = mean(pctTOV),
+            meanastPerGame = mean(astPerGame),
+            meantovPerGame = mean(tovPerGame),
             meanpctSTL = mean(pctSTL),
             meanpctBLK = mean(pctBLK),
             meanstlPerGame = mean(stlPerGame),
@@ -195,7 +209,85 @@ summarystatistics1984 <- players_post1984 %>%
             sdratioBPM = sd(ratioBPM),
             sdratioVORP = sd(ratioVORP)
             )
-summarystatistics1984
+head(summarystatistics1984)
+
+ggplot(data = summarystatistics1984, mapping = aes(x = yearSeason, y = meanpctFG, color = groupPosition)) + 
+  geom_line()
+
+#taking a look at some stats over time, grouped by year and position
+#fg pct
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanpctFG, color = groupPosition)) +  geom_line()
+#3FGPct, see the introduction of 3 point line
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanpctFG3,
+                     color = groupPosition)) +
+  geom_line()
+#meanFGM
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfgmPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanFGA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfgaPerGame,
+                     color = groupPosition)) +
+  geom_line()
+
+#mean3FGM 
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfg3mPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#mean3FGA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfg3aPerGame, color = groupPosition)) +
+  geom_line()
+#meanFTA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanftaPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanFTM
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanftmPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanORB
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanorbPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanDRB
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meandrbPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanAST
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanastPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanSTL
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanstlPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanBLK
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanblkPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanTOV
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meantovPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanPTS
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanptsPerGame,
+                     color = groupPosition)) +
+  geom_line()
 
 
 #trying to standardize

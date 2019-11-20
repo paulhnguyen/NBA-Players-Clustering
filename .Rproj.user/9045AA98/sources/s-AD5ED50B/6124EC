@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1574273303107.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6124EC",
+    "lastKnownWriteTime" : 0,
+    "last_content_update" : 1574273303107,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "7A7AFF99",
+        "caption" : "players_post1984",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=players_post1984&cache_key=7A7AFF99",
+        "displayedObservations" : "15248",
+        "environment" : "",
+        "expression" : "players_post1984",
+        "object" : "players_post1984",
+        "preview" : "0",
+        "totalObservations" : "15248",
+        "variables" : "75"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
