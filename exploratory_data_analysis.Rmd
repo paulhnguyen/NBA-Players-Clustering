@@ -113,7 +113,15 @@ teamstats <- teams_annual_stats(modes = c("PerGame"))[,-c(1,2,4,5,11:17)]
 
 ```{r, message = F, cache = T}
 players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
-all_nbas <- filter(players, isAllNBA == TRUE)
+players_all_nbas <- filter(players, isAllNBA == TRUE)
+players_fifties <- filter(players, yearSeason < 1960)
+players_sixties <- filter(players, yearSeason >= 1960 & yearSeason < 1970)
+players_seventies <- filter(players, yearSeason >= 1970 & yearSeason < 1980)
+players_eighties <- filter(players, yearSeason >= 1980 & yearSeason < 1990)
+players_nineties <- filter(players, yearSeason >= 1990 & yearSeason < 2000)
+players_twothousands <- filter(players, yearSeason >= 2000 & yearSeason < 2010)
+players_twentytens <- filter(players, yearSeason >= 2010 & yearSeason < 2020)
+players_post1984 <- filter(players, yearSeason >= 1984)
 
 allnbasummary <- all_nbas_withstats %>%
   group_by(yearSeason, groupPosition) %>%
