@@ -107,6 +107,116 @@ ggplot(data = thirtygameplayersummary,
 
 
 ```{r, message = F, cache = T}
+#made a new chunk for our "final" dataset
+players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+
+players_post1984 <- filter(players, yearSeason >= 1984) %>%
+  filter(countGames > 29)
+
+#getting rid of some not useful variables
+drops <- c("slugSeason", "idPlayerNBA", "namePlayerBREF", 
+           "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
+           "urlPlayerPhoto", "urlPlayerStats", "urlPlayerActionPhoto",
+           "isSeasonCurrent","slugPlayerSeason")
+
+players_post1984 <-
+  players_post1984[,!(names(players_post1984) %in% drops)]
+
+#some summary statistics
+summarystatistics1984 <- players_post1984 %>%
+  summarize(meanpctFTRate = mean(pctFTRate),
+            meanpct3PRate = mean(pct3PRate),
+            meanpctFG = mean(pctFG),
+            meanpctFG3 = mean(pctFG3),
+            meanpctFG2 = mean(pctFG2),
+            meanpctEFG = mean(pctEFG),
+            meanpctFT = mean(pctFT),
+            meanfgmPerGame = mean(fgmPerGame),
+            meanfgaPerGame = mean(fgaPerGame),
+            meanfg3mPerGame = mean(fg3mPerGame),
+            meanfg3aPerGame = mean(fg3aPerGame),
+            meanfg2mPerGame = mean(fg2mPerGame),
+            meanfg2aPerGame = mean(fg2aPerGame),
+            meanftmPerGame = mean(ftmPerGame),
+            meanftaPerGame = mean(ftaPerGame),
+            meanptsPerGame = mean(ptsPerGame),
+            meanpctORB = mean(pctORB),
+            meanpctTRB = mean(pctTRB),
+            meanpctDRB = mean(pctDRB),
+            meanorbPerGame = mean(orbPerGame),
+            meandrbPerGame = mean (drbPerGame),
+            meantrbPerGame = mean(trbPerGame),
+            meanpctSTL = mean(pctSTL),
+            meanpctBLK = mean(pctBLK),
+            meanstlPerGame = mean(stlPerGame),
+            meanblkPerGame = mean(blkPerGame),
+            meanpfPerGame = mean(pfPerGame),
+            meanratioOWS = mean(ratioOWS),
+            meanratioDWS = mean(ratioDWS),
+            meanratioWS = mean(ratioWS),
+            meanratioWSPer48 = mean(ratioWSPer48),
+            meanratioOBPM = mean(ratioOBPM),
+            meanratioDBPM = mean(ratioDBPM),
+            meanratioBPM = mean(ratioBPM),
+            meanratioVORP = mean(ratioVORP),
+            sdpctFTRate = sd(pctFTRate),
+            sdpct3PRate = sd(pct3PRate),
+            sdpctFG = sd(pctFG),
+            sdpctFG3 = sd(pctFG3),
+            sdpctFG2 = sd(pctFG2),
+            sdpctEFG = sd(pctEFG),
+            sdpctFT = sd(pctFT),
+            sdfgmPerGame = sd(fgmPerGame),
+            sdfgaPerGame = sd(fgaPerGame),
+            sdfg3mPerGame = sd(fg3mPerGame),
+            sdfg3aPerGame = sd(fg3aPerGame),
+            sdfg2mPerGame = sd(fg2mPerGame),
+            sdfg2aPerGame = sd(fg2aPerGame),
+            sdftmPerGame = sd(ftmPerGame),
+            sdftaPerGame = sd(ftaPerGame),
+            sdptsPerGame = sd(ptsPerGame),
+            sdpctORB = sd(pctORB),
+            sdpctTRB = sd(pctTRB),
+            sdpctDRB = sd(pctDRB),
+            sdorbPerGame = sd(orbPerGame),
+            sddrbPerGame = sd (drbPerGame),
+            sdtrbPerGame = sd(trbPerGame),
+            sdpctSTL = sd(pctSTL),
+            sdpctBLK = sd(pctBLK),
+            sdstlPerGame = sd(stlPerGame),
+            sdblkPerGame = sd(blkPerGame),
+            sdpfPerGame = sd(pfPerGame),
+            sdratioOWS = sd(ratioOWS),
+            sdratioDWS = sd(ratioDWS),
+            sdratioWS = sd(ratioWS),
+            sdratioWSPer48 = sd(ratioWSPer48),
+            sdratioOBPM = sd(ratioOBPM),
+            sdratioDBPM = sd(ratioDBPM),
+            sdratioBPM = sd(ratioBPM),
+            sdratioVORP = sd(ratioVORP)
+            )
+summarystatistics1984
+
+
+#trying to standardize
+#standardizedplayers1984nostat <- players_post1984[,-c(11:31, 34:50)]
+
+
+#standardizedplayers1984stats <-
+ # players_post1984[,c(11:31, 34:50)] %>%
+  #scale() 
+  
+#standardizedplayers1984 <- 
+ # cbind(c(standardizedplayers1984nostat,standardizedplayers1984stats)) 
+
+#standardizedplayers1984 <- 
+ # as.data.frame(as.table(standardizedplayers1984))
+
+
+```
+
+
+```{r, message = F, cache = T}
 players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
 players_all_nbas <- filter(players, isAllNBA == TRUE)
 players_fifties <- filter(players, yearSeason < 1960)
@@ -116,7 +226,21 @@ players_eighties <- filter(players, yearSeason >= 1980 & yearSeason < 1990)
 players_nineties <- filter(players, yearSeason >= 1990 & yearSeason < 2000)
 players_twothousands <- filter(players, yearSeason >= 2000 & yearSeason < 2010)
 players_twentytens <- filter(players, yearSeason >= 2010 & yearSeason < 2020)
-players_post1984 <- filter(players, yearSeason >= 1984)
+
+
+players_post1984 <- filter(players, yearSeason >= 1984) %>%
+  filter(countGames > 29)
+
+#getting rid of some not useful variables
+drops <- c("slugSeason", "idPlayerNBA", "namePlayerBREF", 
+           "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
+           "urlPlayerPhoto", "urlPlayerStats", "urlPlayerActionPhoto",
+           "isSeasonCurrent","slugPlayerSeason")
+
+players_post1984 <-
+  players_post1984[,!(names(players_post1984) %in% drops)]
+
+
 
 allnbasummary <- all_nbas_withstats %>%
   group_by(yearSeason, groupPosition) %>%
