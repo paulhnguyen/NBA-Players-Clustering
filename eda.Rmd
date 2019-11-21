@@ -5,7 +5,7 @@ output: github_document
 
 ## Paul Nguyen & David Herrero-Quevedo
 
-```{r, message = FALSE, cache = TRUE}
+```{r, message = FALSE, warning = FALSE, cache = TRUE}
 #load necessary libraries
 library(nbastatR)
 library(tidyverse)
@@ -18,7 +18,7 @@ library(BBmisc)
 We obtained our datasets from basketball-reference.com and stats.nba.com.
 We used the R package `nbastatR` to obtain the data from those websites.
 
-```{r message = FALSE, cache = TRUE}
+```{r message = FALSE, warning = FALSE, cache = TRUE}
 players <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
 players_post1984 <- filter(players, yearSeason >= 1984) %>% filter(countGames > 29)
 dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF", "slugPlayerBREF", "urlPlayerThumbnail",
@@ -60,56 +60,52 @@ graphical (#TODO: need to complete)
 
 ### Variables used:
 #### Shooting:
-- pctFTRate
-- pct3PRate
-- pctFG
-- pctFG3
-- pctFG2
-- pctEFG
-- pctFT
-- fgmPerGame
-- fgaPerGame
-- fg3mPerGame
-- fg3aPerGame
-- fg2mPerGame
-- fg2aPerGame
-- ftmPerGame
-- ftaPerGame
-- ptsPerGame
+- pctFTRate: The percentage of total field goal attempts that are Free Throws.
+- pct3PRate: The percentage of total field goal attempts that are 3-pt shots.
+- pctFG: Field Goal Percentage.
+- pctFG3: Field Goal 3-pt Percentage.
+- pctFG2: Field Goal 2-pt Percentage.
+- pctEFG: Effective Field Goal Percentage. (FGM + (0.5 * 3PM)/FGA). This statistic adjusts for the fact that a 3-pt field goal is worth one more point than a regular 2-pt field goal.
+- pctFT: Free Throw Percentage.
+- fgmPerGame: Field Goal Made per Game.
+- fgaPerGame: Field Goal Attempts per game
+- fg3mPerGame: Field Goal Made (3-pt) per game.
+- fg3aPerGame: Field Goal Attempts (3-pt) per game.
+- fg2mPerGame: Field Goal Made (2-pt) per game.
+- fg2aPerGame: Field Goal Attempts (2-pt) per game.
+- ftmPerGame: Free Throws Made per game.
+- ftaPerGame: Free Throw Attempts per game.
+- ptsPerGame: Points per game.
 
 #### Rebounds
-- pctORB
-- pctTRB
-- pctDRB
-- orbPerGame
-- drbPerGame
-- trbPerGame
+- pctORB: Offensive Rebound Percentage (Rebound Rate).
+- pctTRB: Total Rebound Percentage (Rebound Rate).
+- pctDRB: Deffensive Rebound Percentage (Rebound Rate).
+- orbPerGame: Offensive Rebounds per game.
+- drbPerGame: Deffensive Rebounds per game.
+- trbPerGame: Total Rebounds per game.
 
 #### Passing
-- pctAST
-- pctTOV
-- astPerGame
-- tovPerGame
+- pctAST: Assists Percentage.
+- pctTOV: Turnover Percentage.
+- astPerGame: Assists per game.
+- tovPerGame: Turnovers per game.
 
 #### Defense
-- pctSTL
-- pctBLK
-- stlPerGame
-- blkPerGame
-- pfPerGame
+- pctSTL: Steals percentage.
+- pctBLK: Blocks percentage.
+- stlPerGame: Steals per game.
+- blkPerGame: Blocks per game.
+- pfPerGame: Personal Fouls per game.
 
 #### Efficiency stats
-- ratioOWS
-- ratioDWS
-- ratioWS
-- ratioWSPer48
-- ratioOBPM
-- ratioDBPM
-- ratioBPM
-- ratioVORP
-
-#### Other
-- pctUSG
-- countTeamsPlayerSeason
-- countGamesStarted
-- minutesPerGame
+- ratioOWS: Offensive Win Shares.
+- ratioDWS: Deffensive Win Shares.
+- ratioWS: Win Shares.
+- ratioWSPer48: Win Shares per 48 minutes.
+- ratioOBPM: Offensive Box Plus/Minus.
+- ratioDBPM: Deffensive Box Plus/Minus.
+- ratioBPM: Box Plus/Minus.
+- ratioVORP: Value Over Replacement Player.
+- minutesPerGame: Minutes Per Game
+- pctUSG: Usage Percentage. (100 * ((FGA + 0.44 * FTA + TOV) * (Tm MP / 5)) / (MP * (Tm FGA + 0.44 * Tm FTA + Tm TOV))
