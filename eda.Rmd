@@ -7,10 +7,7 @@ output: github_document
 
 ```{r, message = FALSE, cache = TRUE}
 #load necessary libraries
-library(ggplot2)
-library(dplyr)
 library(nbastatR)
-library(tidyr)
 library(tidyverse)
 library(BBmisc)
 ```
@@ -21,86 +18,39 @@ library(BBmisc)
 We obtained our datasets from basketball-reference.com and stats.nba.com.
 We used the R package `nbastatR` to obtain the data from those websites.
 
-```{r}
+```{r message = FALSE, cache = TRUE}
 players <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
 players_post1984 <- filter(players, yearSeason >= 1984) %>% filter(countGames > 29)
-dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF",
-           "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot", "slugPosition",
-           "urlPlayerPhoto", "urlPlayerStats", "urlPlayerActionPhoto","yearSeasonFirst","countTeamsPlayerSeason","countGamesStarted",
-           "isSeasonCurrent","slugPlayerSeason", "agePlayer", "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF")
+dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF", "slugPlayerBREF", "urlPlayerThumbnail",
+             "urlPlayerHeadshot", "slugPosition","urlPlayerPhoto", "urlPlayerStats", "urlPlayerActionPhoto",
+             "yearSeasonFirst","countTeamsPlayerSeason","countGamesStarted","isSeasonCurrent","slugPlayerSeason", "agePlayer",
+             "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF")
 players_post1984 <- players_post1984[,!(names(players_post1984) %in% dropping)]
 
-players_1984 <- filter(players_post1984, yearSeason == 1984)
-players_1985 <- filter(players_post1984, yearSeason == 1985)
-players_1986 <- filter(players_post1984, yearSeason == 1986)
-players_1987 <- filter(players_post1984, yearSeason == 1987)
-players_1988 <- filter(players_post1984, yearSeason == 1988)
-players_1989 <- filter(players_post1984, yearSeason == 1989)
-players_1990 <- filter(players_post1984, yearSeason == 1990)
-players_1991 <- filter(players_post1984, yearSeason == 1991)
-players_1992 <- filter(players_post1984, yearSeason == 1992)
-players_1993 <- filter(players_post1984, yearSeason == 1993)
-players_1994 <- filter(players_post1984, yearSeason == 1994)
-players_1995 <- filter(players_post1984, yearSeason == 1995)
-players_1996 <- filter(players_post1984, yearSeason == 1996)
-players_1997 <- filter(players_post1984, yearSeason == 1997)
-players_1998 <- filter(players_post1984, yearSeason == 1998)
-players_1999 <- filter(players_post1984, yearSeason == 1999)
-players_2000 <- filter(players_post1984, yearSeason == 2000)
-players_2001 <- filter(players_post1984, yearSeason == 2001)
-players_2002 <- filter(players_post1984, yearSeason == 2002)
-players_2003 <- filter(players_post1984, yearSeason == 2003)
-players_2004 <- filter(players_post1984, yearSeason == 2004)
-players_2005 <- filter(players_post1984, yearSeason == 2005)
-players_2006 <- filter(players_post1984, yearSeason == 2006)
-players_2007 <- filter(players_post1984, yearSeason == 2007)
-players_2008 <- filter(players_post1984, yearSeason == 2008)
-players_2009 <- filter(players_post1984, yearSeason == 2009)
-players_2010 <- filter(players_post1984, yearSeason == 2010)
-players_2011 <- filter(players_post1984, yearSeason == 2011)
-players_2012 <- filter(players_post1984, yearSeason == 2012)
-players_2013 <- filter(players_post1984, yearSeason == 2013)
-players_2014 <- filter(players_post1984, yearSeason == 2014)
-players_2015 <- filter(players_post1984, yearSeason == 2015)
-players_2016 <- filter(players_post1984, yearSeason == 2016)
-players_2017 <- filter(players_post1984, yearSeason == 2017)
-players_2018 <- filter(players_post1984, yearSeason == 2018)
-players_2019 <- filter(players_post1984, yearSeason == 2019)
-players_2020 <- filter(players_post1984, yearSeason == 2020)
-
-players_normalized<-c(players_1984,players_1985,players_1986,)
-
 for(year in 1984:2020){
+  eval(parse(text = paste( "players_",year," <- filter(players_post1984, yearSeason == ",year,")", sep = "" )))
   for(i in 6:48){
     eval(parse(text = paste( "players_",year,"[,",i,"] <- normalize(players_",year,"[,",i,"],method = 'range', range = c(0,1))", sep = "")))
   }
 }
 
-
-years <- c(players_1984, players_1985, players_1986)
-years
+players_post1984_normalized <- players_1984
+for(year in 1985:2020){
+  eval(parse(text = paste( "players_post1984_normalized <- rbind(players_post1984_normalized, players_",year,")", sep = "")))
+}
 ```
 
 ### Unit of observation and Variables
 Our unit of observation is a player during one season.
-Our original dataset consists of 21235 observations  and 75 variables, but 
-we've reduced this number to 11695 observations after selecting seasons
-after 1983 and players that have played in at least 30 games in the season.
-We've also taken out some unnecessary variables to make a 11695 observation,
-64 variable dataset.
-
-```{r, message = FALSE, cache = TRUE}
-players <- bref_players_stats(seasons = 1950:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
-players_post1984 <- filter(players, yearSeason >= 1984) %>%
-  filter(countGames > 29)
-```
-
-
+Our original dataset consists of 21235 observations  and 75 variables, but we've reduced this number to 
+11695 observations after selecting seasons after 1983 and players that have played in at least 30 games in the season.
+We've also taken out some unnecessary variables to make a 11695 observation, 55 variable dataset. 
+We have included descriptions of the variables at the bottom of the page.
 
 ## Data Exploration
 
 ### Missingness
-(#TODO: need to complete)
+The reasoning behind choosing seasons after 1983 is in part that we are not missing any predictor for any observation.
 
 ### Univariate analysis of the response
 Numerical, graphical (#TODO: need to complete)
