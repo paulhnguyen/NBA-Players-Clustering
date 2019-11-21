@@ -10,6 +10,8 @@ output: github_document
 library(nbastatR)
 library(tidyverse)
 library(BBmisc)
+library(ggplot2)
+library(dplyr)
 ```
 
 ## Data Description
@@ -29,10 +31,16 @@ ggplot(players_post1984, mapping = aes(x = minutes)) +
  players_post1984 <- filter(players_post1984, minutes > 600)
 
  # Variables to drop
-dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF", "slugPlayerBREF", "urlPlayerThumbnail",
-             "urlPlayerHeadshot", "slugPosition","urlPlayerPhoto", "urlPlayerStats", "urlPlayerActionPhoto",
-             "yearSeasonFirst","countTeamsPlayerSeason","countGamesStarted","isSeasonCurrent","slugPlayerSeason", "agePlayer",
-             "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF")
+dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF",
+             "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
+             "slugPosition","urlPlayerPhoto", "urlPlayerStats",
+             "urlPlayerActionPhoto","yearSeasonFirst",
+             "countTeamsPlayerSeason","countGamesStarted",
+             "isSeasonCurrent","slugPlayerSeason", "agePlayer",
+             "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF", 
+             "countTeamsPlayerSeasonPerGame", "groupAllNBA",
+             "numberAllNBATeam", "isAllNBA2", "isAllNBA1",
+             "isAllNBA3" )
 # Dropping variables
 players_post1984 <- players_post1984[,!(names(players_post1984) %in% dropping)]
 
@@ -54,8 +62,8 @@ for(year in 1985:2020){
 ### Unit of observation and Variables
 Our unit of observation is a player during one season.
 Our original dataset consists of 21235 observations  and 75 variables, but we've reduced this number to 
-11695 observations after selecting seasons after 1983 and players that have played in at least 30 games in the season.
-We've also taken out some unnecessary variables to make a 11695 observation, 55 variable dataset. 
+10223 observations after selecting seasons after 1983 and players that have played in at least 600 minutes in the season.
+We've also taken out some unnecessary variables to make a 11695 observation, 49 variable dataset. 
 We have included descriptions of the variables at the bottom of the page.
 
 ## Data Exploration
@@ -218,13 +226,10 @@ ggplot(data = summarystatistics1984,
 ```
 
 ### Missingness
-The reasoning behind choosing seasons after 1983 is in part that we are not missing any predictor for any observation.
+The reasoning behind choosing seasons after 1983 is in part so that we are
+not missing any predictors for any observation. For example, the three 
+point line was introduced in the 79/80 season.
 
-### Univariate analysis of the response
-Numerical, graphical (#TODO: need to complete)
-
-### Bi-, trivariate analysis of the response
-graphical (#TODO: need to complete)
 
 ### Variables used:
 #### Shooting:
@@ -267,6 +272,7 @@ graphical (#TODO: need to complete)
 - pfPerGame: Personal Fouls per game.
 
 #### Efficiency stats
+- ratioPER: Player Efficiency Rating
 - ratioOWS: Offensive Win Shares.
 - ratioDWS: Deffensive Win Shares.
 - ratioWS: Win Shares.
@@ -277,3 +283,68 @@ graphical (#TODO: need to complete)
 - ratioVORP: Value Over Replacement Player.
 - minutesPerGame: Minutes Per Game
 - pctUSG: Usage Percentage. (100 * ((FGA + 0.44 * FTA + TOV) * (Tm MP / 5)) / (MP * (Tm FGA + 0.44 * Tm FTA + Tm TOV))
+
+
+##Looking at PCA (Principal Component Analysis)
+
+```{r}
+pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
+d <- as.data.frame(pca$x)
+pc1 <- pca$rotation[, 1]
+pc1
+pc2 <- pca$rotation[, 2]
+pc2
+d$namePlayer <- players_post1984_normalized$namePlayer
+d$isAllNBA <- players_post1984_normalized$isAllNBA
+d$yearSeason <- players_post1984_normalized$yearSeason
+
+pcaplot <- ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .7) 
+pcaplot
+
+d1 <- data.frame(PC = 1:43,
+                PVE = pca$sdev^2 /
+                  sum(pca$sdev^2))
+
+ggplot(d1, aes(x = PC, y = PVE)) +
+  geom_line() + 
+  geom_point()
+
+
+
+
+
+
+#lets now create a plot with some players that we will recognize
+currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .1) +
+  geom_text(data = subset(d, isAllNBA == TRUE & 
+                            yearSeason %in% 2017:2019 ),
+            aes(label = namePlayer))
+currentplayersplot
+
+famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .1) +
+  geom_text(data = subset(d, namePlayer %in% c("Lebron James", 
+                                               "Michael Jordan",
+                                               "Stephen Curry",
+                                               "Kobe Bryant",
+                                               "Tim Duncan",
+                                               "Magic Johnson",
+                                               "Kevin Durant",
+                                               "Corey Maggette")),
+            aes(label = namePlayer))
+famousplayersplot
+#corey maguette is included here because i remember his name being 
+#funny when i watched basketball
+```
+PC1 seems to be a case of an "Usage" (-) vs "Non-Usage" (+) battle.
+In the negative side, we see characteristics such as ptsPerGame,
+fgmPerGame, fg2mPerGame, fg2aPerGame. The other types of variables 
+do not tend to take on positive values, but the ones that are include:
+pctBLK, pctSTL, pctTOV.
+
+Looking at PC2, I would describe this as "Shooters" (-) vs "Baseline" (+).
+We see negative values for shooting characteristics, such as pct3PRate, 
+fg3mPerGame, fg3aPerGame, and positive values for characteristics 
+typical for tall, big players:pctDRB, pctTRB, blkPerGame
