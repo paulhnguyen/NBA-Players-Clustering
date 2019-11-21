@@ -285,7 +285,7 @@ point line was introduced in the 79/80 season.
 - pctUSG: Usage Percentage. (100 * ((FGA + 0.44 * FTA + TOV) * (Tm MP / 5)) / (MP * (Tm FGA + 0.44 * Tm FTA + Tm TOV))
 
 
-##Looking at PCA (Principal Component Analysis)
+## Looking at PCA (Principal Component Analysis)
 
 ```{r}
 pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
