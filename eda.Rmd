@@ -12,6 +12,7 @@ library(tidyverse)
 library(BBmisc)
 library(ggplot2)
 library(dplyr)
+library(corrplot)
 ```
 
 ## Data Description
@@ -223,6 +224,10 @@ ggplot(data = summarystatistics1984,
        mapping = aes(x = yearSeason, y = meanptsPerGame,
                      color = groupPosition)) +
   geom_line()
+
+#also a correlation matrix plot
+rcorr <- round(cor(players_post1984_normalized[,c(5:48)]),2)
+corrplot(corr, method="color")
 ```
 
 ### Missingness
