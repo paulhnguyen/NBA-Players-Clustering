@@ -13,6 +13,7 @@ library(BBmisc)
 library(ggplot2)
 library(dplyr)
 library(corrplot)
+library(gganimate)
 ```
 
 ## Data Description
@@ -260,7 +261,9 @@ d$isAllNBA <- players_post1984_normalized$isAllNBA
 d$yearSeason <- players_post1984_normalized$yearSeason
 
 pcaplot <- ggplot(d, aes(x = PC1, y = PC2)) +
-  geom_point(size = .5, alpha = .7) 
+  geom_point(size = .5, alpha = .7) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
 pcaplot
 
 d1 <- data.frame(PC = 1:43,
@@ -278,7 +281,9 @@ currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .1) +
   geom_text(data = subset(d, isAllNBA == TRUE & 
                             yearSeason %in% 2017:2019 ),
-            aes(label = namePlayer))
+            aes(label = namePlayer)) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
 currentplayersplot
 
 famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
@@ -289,12 +294,39 @@ famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
                                                "Kobe Bryant",
                                                "Tim Duncan",
                                                "Magic Johnson",
-                                               "Kevin Durant",
-                                               "Corey Maggette")),
-            aes(label = namePlayer))
+                                               "Kevin Durant")),
+            aes(label = namePlayer)) +
+  geom_point(color = "purple",
+             data = subset(d, namePlayer %in% c("Lebron James", 
+                                               "Michael Jordan",
+                                               "Stephen Curry",
+                                               "Kobe Bryant",
+                                               "Tim Duncan",
+                                               "Magic Johnson",
+                                               "Kevin Durant"),
+             size = .5, alpha = .8)) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
 famousplayersplot
-#corey maguette is included here because i remember his name being 
-#funny when i watched basketball
+#animated plot, allstars throughout the seasons
+allnbaplayerspca <- d %>%
+  filter(isAllNBA == TRUE)
+#staticplot
+staticplot <- ggplot(data = allnbaplayerspca, 
+                     mapping = aes(x = PC1, y = PC2)) +
+  geom_point(alpha = .8, color = "purple") + 
+  geom_text(data = allnbaplayerspca, mapping = aes(label = namePlayer)) +
+  geom_point(data = d, mapping = aes(x = PC1, y = PC2), alpha = .1) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+staticplot
+
+
+#byseason
+byseasonplot <- staticplot + transition_time(yearSeason) +
+  labs(title = "Season: {frame_time}")
+animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
+
 ```
 
 
