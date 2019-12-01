@@ -162,9 +162,8 @@ animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
 
 ```{r}
 #to do: k-means clustering, hierchical clustering
-library(rgl)
 n_pcas <- as_tibble(pca$x[,1:3])
-n_clusters_kmeans<-kmeans(three_pcas, centers = 8)
+n_clusters_kmeans<-kmeans(n_pcas, centers = 8)
 n_clusters_hier<-hclust(dist(n_pcas))
 n_clusters_hier_plot<-plot(n_clusters_hier)
 

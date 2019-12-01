@@ -185,6 +185,7 @@ pc2
     ##    -0.053685910     0.133881667    -0.073864587
 
 ``` r
+pca3 <- pca$rotation[, 3]
 d$namePlayer <- players_post1984_normalized$namePlayer
 d$isAllNBA <- players_post1984_normalized$isAllNBA
 d$yearSeason <- players_post1984_normalized$yearSeason
@@ -324,4 +325,27 @@ animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
 
 ``` r
 #to do: k-means clustering, hierchical clustering
+n_pcas <- as_tibble(pca$x[,1:3])
+n_clusters_kmeans<-kmeans(n_pcas, centers = 8)
+n_clusters_hier<-hclust(dist(n_pcas))
+n_clusters_hier_plot<-plot(n_clusters_hier)
 ```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+n_clusters_hier_cut <- cutree(n_clusters_hier, 10)
+
+n_pcas_kmeans <- n_pcas %>% mutate(cluster = n_clusters_kmeans$cluster)
+n_pcas_hier <- n_pcas %>% mutate(cluster = n_clusters_hier_cut)
+
+ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
+
+``` r
+ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
