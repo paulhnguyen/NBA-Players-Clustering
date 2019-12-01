@@ -10,8 +10,6 @@ output: github_document
 library(nbastatR)
 library(tidyverse)
 library(BBmisc)
-library(ggplot2)
-library(dplyr)
 library(corrplot)
 library(gganimate)
 ```
@@ -71,8 +69,6 @@ We have included descriptions of the variables at the bottom of the page.
 ## Data Exploration
 
 ```{r}
-library(dplyr)
-library(ggplot2)
 #some summary statistics
 summarystatistics1984 <- players_post1984 %>%
   group_by(yearSeason, groupPosition) %>%
@@ -251,114 +247,6 @@ We see negative values for shooting characteristics, such as pct3PRate,
 fg3mPerGame, fg3aPerGame, and positive values for characteristics 
 typical for tall, big players:pctDRB, pctTRB, blkPerGame.
 
-```{r}
-pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
-d <- as.data.frame(pca$x)
-pc1 <- pca$rotation[, 1]
-pc1
-pc2 <- pca$rotation[, 2]
-pc2
-d$namePlayer <- players_post1984_normalized$namePlayer
-d$isAllNBA <- players_post1984_normalized$isAllNBA
-d$yearSeason <- players_post1984_normalized$yearSeason
-
-pcaplot <- ggplot(d, aes(x = PC1, y = PC2)) +
-  geom_point(size = .5, alpha = .7) +
-  ylab("Shooters vs Baseline") +
-  xlab("Usage vs Non-Usage")
-pcaplot
-
-d1 <- data.frame(PC = 1:43,
-                PVE = pca$sdev^2 /
-                  sum(pca$sdev^2))
-
-ggplot(d1, aes(x = PC, y = PVE)) +
-  geom_line() + 
-  geom_point()
-
-#some PCA exploration
-pcarotations <- data.frame(pca$rotation)
-pcarotations$variables <- rownames(pcarotations)
-PC1graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC1, 
-                                          fill = variables)) +
-  geom_col() +
-  coord_flip() +
-  theme(legend.position = "none") +
-  labs(title = "Usage (-) vs Non-Usage (+)")
-PC1graph
-#note important characteristics: tov, pts, minutes, fgm, fga
-PC2graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC2, 
-                                          fill = variables)) +
-  geom_col() +
-  coord_flip() +
-  theme(legend.position = "none")+
-  labs(title = "Shooters vs Baseline")
-PC2graph
-#note important characteristics: (+) rebounding stats, (-) 3pt shooting, asts
-PC3graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC3, 
-                                          fill = variables)) +
-  geom_col() +
-  coord_flip() +
-  theme(legend.position = "none")
-PC3graph
-#idk this one seems pretty hard to interpret lol
-
-#lets now create a plot with some players that we will recognize
-currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
-  geom_point(size = .5, alpha = .1) +
-  geom_text(data = subset(d, isAllNBA == TRUE & 
-                            yearSeason %in% 2017:2019 ),
-            aes(label = namePlayer)) +
-  ylab("Shooters vs Baseline") +
-  xlab("Usage vs Non-Usage")
-currentplayersplot
-
-famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
-  geom_point(size = .5, alpha = .1) +
-  geom_text(data = subset(d, namePlayer %in% c("Lebron James", 
-                                               "Michael Jordan",
-                                               "Stephen Curry",
-                                               "Kobe Bryant",
-                                               "Tim Duncan",
-                                               "Magic Johnson",
-                                               "Kevin Durant")),
-            aes(label = namePlayer)) +
-  geom_point(color = "purple",
-             data = subset(d, namePlayer %in% c("Lebron James", 
-                                               "Michael Jordan",
-                                               "Stephen Curry",
-                                               "Kobe Bryant",
-                                               "Tim Duncan",
-                                               "Magic Johnson",
-                                               "Kevin Durant"),
-             size = .5, alpha = .8)) +
-  ylab("Shooters vs Baseline") +
-  xlab("Usage vs Non-Usage")
-famousplayersplot
-#animated plot, allstars throughout the seasons
-allnbaplayerspca <- d %>%
-  filter(isAllNBA == TRUE)
-#staticplot
-staticplot <- ggplot(data = allnbaplayerspca, 
-                     mapping = aes(x = PC1, y = PC2)) +
-  geom_point(alpha = .8, color = "purple") + 
-  geom_text(data = allnbaplayerspca, mapping = aes(label = namePlayer)) +
-  geom_point(data = d, mapping = aes(x = PC1, y = PC2), alpha = .1) +
-  ylab("Shooters vs Baseline") +
-  xlab("Usage vs Non-Usage")
-staticplot
-
-
-#byseason
-byseasonplot <- staticplot + transition_time(yearSeason) +
-  labs(title = "Season: {frame_time}")
-animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
-
-```
-
 
 ### Variables used:
 #### Shooting:
@@ -412,10 +300,3 @@ animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
 - ratioVORP: Value Over Replacement Player.
 - minutesPerGame: Minutes Per Game
 - pctUSG: Usage Percentage. (100 * ((FGA + 0.44 * FTA + TOV) * (Tm MP / 5)) / (MP * (Tm FGA + 0.44 * Tm FTA + Tm TOV))
-
-```{r}
-#to do: k-means clustering, hierchical clustering
-
-
-
-```

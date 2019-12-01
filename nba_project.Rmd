@@ -1,0 +1,164 @@
+---
+title: "NBA Modern Positions"
+output: github_document
+---
+
+```{r,warning = FALSE ,message = FALSE}
+#load necessary libraries
+library(nbastatR)
+library(tidyverse)
+library(BBmisc)
+library(corrplot)
+library(gganimate)
+```
+
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+# Gets player stats from 1984 to 2020.
+players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+
+# Filters by amount of time they played.
+ggplot(players_post1984, mapping = aes(x = minutes)) + 
+   geom_histogram() +
+   geom_vline(xintercept = 600)
+ players_post1984 <- filter(players_post1984, minutes > 600)
+
+ # Variables to drop
+dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF",
+             "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
+             "slugPosition","urlPlayerPhoto", "urlPlayerStats",
+             "urlPlayerActionPhoto","yearSeasonFirst",
+             "countTeamsPlayerSeason","countGamesStarted",
+             "isSeasonCurrent","slugPlayerSeason", "agePlayer",
+             "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF", 
+             "countTeamsPlayerSeasonPerGame", "groupAllNBA",
+             "numberAllNBATeam", "isAllNBA2", "isAllNBA1",
+             "isAllNBA3" )
+# Dropping variables
+players_post1984 <- players_post1984[,!(names(players_post1984) %in% dropping)]
+
+# Groups players by season, and normalizes by season.
+for(year in 1984:2020){
+  eval(parse(text = paste( "players_",year," <- filter(players_post1984, yearSeason == ",year,")", sep = "" )))
+  for(i in 6:48){
+    eval(parse(text = paste( "players_",year,"[,",i,"] <- normalize(players_",year,"[,",i,"],method = 'range', range = c(0,1))", sep = "")))
+  }
+}
+
+# Ungroups players by season.
+players_post1984_normalized <- players_1984
+for(year in 1985:2020){
+  eval(parse(text = paste( "players_post1984_normalized <- rbind(players_post1984_normalized, players_",year,")", sep = "")))
+}
+```
+
+```{r}
+pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
+d <- as.data.frame(pca$x)
+pc1 <- pca$rotation[, 1]
+pc1
+pc2 <- pca$rotation[, 2]
+pc2
+d$namePlayer <- players_post1984_normalized$namePlayer
+d$isAllNBA <- players_post1984_normalized$isAllNBA
+d$yearSeason <- players_post1984_normalized$yearSeason
+
+pcaplot <- ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .7) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+pcaplot
+
+d1 <- data.frame(PC = 1:43,
+                PVE = pca$sdev^2 /
+                  sum(pca$sdev^2))
+
+ggplot(d1, aes(x = PC, y = PVE)) +
+  geom_line() + 
+  geom_point()
+
+#some PCA exploration
+pcarotations <- data.frame(pca$rotation)
+pcarotations$variables <- rownames(pcarotations)
+PC1graph <- 
+  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC1, 
+                                          fill = variables)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(title = "Usage (-) vs Non-Usage (+)")
+PC1graph
+#note important characteristics: tov, pts, minutes, fgm, fga
+PC2graph <- 
+  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC2, 
+                                          fill = variables)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none")+
+  labs(title = "Shooters vs Baseline")
+PC2graph
+#note important characteristics: (+) rebounding stats, (-) 3pt shooting, asts
+PC3graph <- 
+  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC3, 
+                                          fill = variables)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none")
+PC3graph
+#idk this one seems pretty hard to interpret lol
+
+#lets now create a plot with some players that we will recognize
+currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .1) +
+  geom_text(data = subset(d, isAllNBA == TRUE & 
+                            yearSeason %in% 2017:2019 ),
+            aes(label = namePlayer)) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+currentplayersplot
+
+famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .1) +
+  geom_text(data = subset(d, namePlayer %in% c("Lebron James", 
+                                               "Michael Jordan",
+                                               "Stephen Curry",
+                                               "Kobe Bryant",
+                                               "Tim Duncan",
+                                               "Magic Johnson",
+                                               "Kevin Durant")),
+            aes(label = namePlayer)) +
+  geom_point(color = "purple",
+             data = subset(d, namePlayer %in% c("Lebron James", 
+                                               "Michael Jordan",
+                                               "Stephen Curry",
+                                               "Kobe Bryant",
+                                               "Tim Duncan",
+                                               "Magic Johnson",
+                                               "Kevin Durant"),
+             size = .5, alpha = .8)) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+famousplayersplot
+#animated plot, allstars throughout the seasons
+allnbaplayerspca <- d %>%
+  filter(isAllNBA == TRUE)
+#staticplot
+staticplot <- ggplot(data = allnbaplayerspca, 
+                     mapping = aes(x = PC1, y = PC2)) +
+  geom_point(alpha = .8, color = "purple") + 
+  geom_text(data = allnbaplayerspca, mapping = aes(label = namePlayer)) +
+  geom_point(data = d, mapping = aes(x = PC1, y = PC2), alpha = .1) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+staticplot
+
+
+#byseason
+byseasonplot <- staticplot + transition_time(yearSeason) +
+  labs(title = "Season: {frame_time}")
+animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
+
+```
+
+```{r}
+#to do: k-means clustering, hierchical clustering
+```
