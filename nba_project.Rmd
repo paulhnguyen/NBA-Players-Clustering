@@ -58,6 +58,7 @@ pc1 <- pca$rotation[, 1]
 pc1
 pc2 <- pca$rotation[, 2]
 pc2
+pca3 <- pca$rotation[, 3]
 d$namePlayer <- players_post1984_normalized$namePlayer
 d$isAllNBA <- players_post1984_normalized$isAllNBA
 d$yearSeason <- players_post1984_normalized$yearSeason
@@ -161,4 +162,18 @@ animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
 
 ```{r}
 #to do: k-means clustering, hierchical clustering
+library(rgl)
+n_pcas <- as_tibble(pca$x[,1:3])
+n_clusters_kmeans<-kmeans(three_pcas, centers = 8)
+n_clusters_hier<-hclust(dist(n_pcas))
+n_clusters_hier_plot<-plot(n_clusters_hier)
+
+n_clusters_hier_cut <- cutree(n_clusters_hier, 10)
+
+n_pcas_kmeans <- n_pcas %>% mutate(cluster = n_clusters_kmeans$cluster)
+n_pcas_hier <- n_pcas %>% mutate(cluster = n_clusters_hier_cut)
+
+ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+
 ```
