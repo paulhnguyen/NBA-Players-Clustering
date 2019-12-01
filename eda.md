@@ -10,6 +10,8 @@ library(tidyverse)
 library(BBmisc)
 library(ggplot2)
 library(dplyr)
+library(corrplot)
+library(gganimate)
 ```
 
 ## Data Description
@@ -157,6 +159,8 @@ variables at the bottom of the page.
 ## Data Exploration
 
 ``` r
+library(dplyr)
+library(ggplot2)
 #some summary statistics
 summarystatistics1984 <- players_post1984 %>%
   group_by(yearSeason, groupPosition) %>%
@@ -425,6 +429,14 @@ ggplot(data = summarystatistics1984,
 
 ![](eda_files/figure-gfm/unnamed-chunk-3-16.png)<!-- -->
 
+``` r
+#also a correlation matrix plot
+rcorr <- round(cor(players_post1984_normalized[,c(5:48)]),2)
+corrplot(rcorr, method="color")
+```
+
+![](eda_files/figure-gfm/unnamed-chunk-3-17.png)<!-- -->
+
 ### Missingness
 
 The reasoning behind choosing seasons after 1983 is in part so that we
@@ -453,23 +465,23 @@ pc1
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##   -0.1980871576   -0.1098736413    0.0455082726   -0.0642542878    0.0006940729 
+    ##   -0.1983005970   -0.1093611304    0.0446114991   -0.0647713332    0.0009161219 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##   -0.0705545092   -0.0613754587   -0.0719224169    0.0238713028    0.0208298208 
+    ##   -0.0700374947   -0.0607858529   -0.0727580277    0.0245108654    0.0212159135 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##    0.0478072044   -0.1556078027   -0.1732077874   -0.1597643440   -0.1976663719 
+    ##    0.0472907155   -0.1560062675   -0.1734807205   -0.1600089366   -0.1981641340 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##   -0.1541798795   -0.1718197639   -0.0537619868   -0.1725470725   -0.1724446883 
+    ##   -0.1544842420   -0.1718822222   -0.0538801002   -0.1726861352   -0.1729401844 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##   -0.0891568924   -0.0298643285   -0.0865612553   -0.0812102047   -0.0435813824 
+    ##   -0.0889145670   -0.0305770644   -0.0863343808   -0.0805329326   -0.0432231125 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##   -0.3006448311   -0.2519515522   -0.2394011001   -0.0737897094   -0.0763096189 
+    ##   -0.2998895356   -0.2521327630   -0.2396053072   -0.0744153019   -0.0769013838 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##   -0.2393988096   -0.2377345422   -0.2103962933   -0.2068525677   -0.1245097271 
+    ##   -0.2393336867   -0.2379725493   -0.2102740187   -0.2068602535   -0.1238684669 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##   -0.1749194273   -0.1675693732   -0.1192275979   -0.1463681249   -0.0813222863 
+    ##   -0.1743708911   -0.1668884971   -0.1198521019   -0.1465998170   -0.0812665818 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##   -0.2132659711   -0.1385803677   -0.2479904267
+    ##   -0.2133118488   -0.1379065883   -0.2479709457
 
 ``` r
 pc2 <- pca$rotation[, 2]
@@ -477,23 +489,23 @@ pc2
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##     0.007906216     0.024185682    -0.301452862     0.133083496     0.084813432 
+    ##     0.008229544     0.025154303    -0.302072212     0.132369578     0.084388721 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##     0.274568246     0.316628827    -0.177755271     0.126289448    -0.240608623 
+    ##     0.274858386     0.316735159    -0.177544483     0.124695068    -0.239702234 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##     0.046821872    -0.071879419    -0.031733616     0.069933353     0.002019957 
+    ##     0.046451946    -0.071807006    -0.031764850     0.070089271     0.001804887 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##     0.037311532    -0.109476041     0.166010256     0.003183213    -0.008237714 
+    ##     0.037530614    -0.108632785     0.166371704     0.003848704    -0.008176325 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##     0.159441033    -0.338371723     0.097924053     0.040227078    -0.147919708 
+    ##     0.159966530    -0.338672020     0.098603795     0.041321588    -0.147209737 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##    -0.076648812    -0.060250300    -0.099910797    -0.278458255    -0.289885859 
+    ##    -0.075582357    -0.059985441    -0.099951216    -0.278630463    -0.289626927 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##     0.016578985    -0.004984489    -0.021218203     0.008074756     0.224722622 
+    ##     0.016978015    -0.005219723    -0.020993061     0.008195159     0.224811902 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##     0.153985662     0.187303497    -0.149363594    -0.110362996     0.152691547 
+    ##     0.154785859     0.188029191    -0.149428426    -0.109689812     0.152621746 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##    -0.053991865     0.133445239    -0.074282222
+    ##    -0.053685910     0.133881667    -0.073864587
 
 ``` r
 d$namePlayer <- players_post1984_normalized$namePlayer
@@ -501,7 +513,9 @@ d$isAllNBA <- players_post1984_normalized$isAllNBA
 d$yearSeason <- players_post1984_normalized$yearSeason
 
 pcaplot <- ggplot(d, aes(x = PC1, y = PC2)) +
-  geom_point(size = .5, alpha = .7) 
+  geom_point(size = .5, alpha = .7) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
 pcaplot
 ```
 
@@ -520,16 +534,63 @@ ggplot(d1, aes(x = PC, y = PVE)) +
 ![](eda_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->
 
 ``` r
+#some PCA exploration
+pcarotations <- data.frame(pca$rotation)
+pcarotations$variables <- rownames(pcarotations)
+PC1graph <- 
+  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC1, 
+                                          fill = variables)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(title = "Usage (-) vs Non-Usage (+)")
+PC1graph
+```
+
+![](eda_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
+
+``` r
+#note important characteristics: tov, pts, minutes, fgm, fga
+PC2graph <- 
+  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC2, 
+                                          fill = variables)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none")+
+  labs(title = "Shooters vs Baseline")
+PC2graph
+```
+
+![](eda_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
+
+``` r
+#note important characteristics: (+) rebounding stats, (-) 3pt shooting, asts
+PC3graph <- 
+  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC3, 
+                                          fill = variables)) +
+  geom_col() +
+  coord_flip() +
+  theme(legend.position = "none")
+PC3graph
+```
+
+![](eda_files/figure-gfm/unnamed-chunk-4-5.png)<!-- -->
+
+``` r
+#idk this one seems pretty hard to interpret lol
+
 #lets now create a plot with some players that we will recognize
 currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .1) +
   geom_text(data = subset(d, isAllNBA == TRUE & 
                             yearSeason %in% 2017:2019 ),
-            aes(label = namePlayer))
+            aes(label = namePlayer)) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
 currentplayersplot
 ```
 
-![](eda_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
+![](eda_files/figure-gfm/unnamed-chunk-4-6.png)<!-- -->
 
 ``` r
 famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
@@ -540,18 +601,49 @@ famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
                                                "Kobe Bryant",
                                                "Tim Duncan",
                                                "Magic Johnson",
-                                               "Kevin Durant",
-                                               "Corey Maggette")),
-            aes(label = namePlayer))
+                                               "Kevin Durant")),
+            aes(label = namePlayer)) +
+  geom_point(color = "purple",
+             data = subset(d, namePlayer %in% c("Lebron James", 
+                                               "Michael Jordan",
+                                               "Stephen Curry",
+                                               "Kobe Bryant",
+                                               "Tim Duncan",
+                                               "Magic Johnson",
+                                               "Kevin Durant"),
+             size = .5, alpha = .8)) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
 famousplayersplot
 ```
 
-![](eda_files/figure-gfm/unnamed-chunk-4-4.png)<!-- -->
+![](eda_files/figure-gfm/unnamed-chunk-4-7.png)<!-- -->
 
 ``` r
-#corey maguette is included here because i remember his name being 
-#funny when i watched basketball
+#animated plot, allstars throughout the seasons
+allnbaplayerspca <- d %>%
+  filter(isAllNBA == TRUE)
+#staticplot
+staticplot <- ggplot(data = allnbaplayerspca, 
+                     mapping = aes(x = PC1, y = PC2)) +
+  geom_point(alpha = .8, color = "purple") + 
+  geom_text(data = allnbaplayerspca, mapping = aes(label = namePlayer)) +
+  geom_point(data = d, mapping = aes(x = PC1, y = PC2), alpha = .1) +
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+staticplot
 ```
+
+![](eda_files/figure-gfm/unnamed-chunk-4-8.png)<!-- -->
+
+``` r
+#byseason
+byseasonplot <- staticplot + transition_time(yearSeason) +
+  labs(title = "Season: {frame_time}")
+animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
+```
+
+![](eda_files/figure-gfm/unnamed-chunk-4-1.gif)<!-- -->
 
 ### Variables used:
 
@@ -616,3 +708,9 @@ famousplayersplot
   - minutesPerGame: Minutes Per Game
   - pctUSG: Usage Percentage. (100 \* ((FGA + 0.44 \* FTA + TOV) \* (Tm
     MP / 5)) / (MP \* (Tm FGA + 0.44 \* Tm FTA + Tm TOV))
+
+<!-- end list -->
+
+``` r
+#to do: k-means clustering, hierchical clustering
+```
