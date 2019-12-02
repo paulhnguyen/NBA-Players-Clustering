@@ -16,7 +16,26 @@ library(plotly)
 
 ## Abstract
 
+In this project, my group will describe the changes in playstyle types
+throughout the NBA's history. We will perform PCA analysis to determine
+the essential traits for different players, and then use important principal
+components and unsupervised learning techinques to cluster players into
+different "types" and see the movement of types over time. 
+
 ## Introduction
+
+The NBA, initially created in 1946, has seen much change throughout its 
+history, for example, the introduction of the 3 point line in the 79/80
+season and the elimination of hand checking in 1990. These changes have
+altered the playstyles of many teams; some players, especially 
+former players, have critisized these changes, such as the reliance of many
+teams on jump shooting. If you look at the Houston Rocket's shotchart,
+you may notice huge regions of white space away from the basket and the 
+3 point line in order to maximize the efficiency of their shots. We expect
+to see a steady increase in 3 point shooting from when the 3 point line 
+was introduced in the NBA. We also expect to see a decrease in big, slow
+players that may have trouble defending these shots, and a decrease in 
+players that specialize in shooting the midrange.
 
 ### The data
 
@@ -501,6 +520,73 @@ PC4_all_nba_graph
 ```
 
 ```{r}
+#some more animated graphs
+#counts
+nbaclusters <- tibble(n_pcas_kmeans_all_nba$cluster, 
+                          n_pcas_hier_all_nba$cluster,
+                          allnbaplayerspca$yearSeason) %>%
+  mutate(kmeanscluster=n_pcas_kmeans_all_nba$cluster ,
+         hierarchicalcluster = n_pcas_hier_all_nba$cluster,
+         yearSeason= allnbaplayerspca$yearSeason)
+nbaclusters <- nbaclusters[,-c(1:3)]
+
+
+clustercountkmeansallnba <- nbaclusters %>%
+  group_by(yearSeason, kmeanscluster) %>%
+  summarize(count = n())
+clustercounthierchallnba <- nbaclusters %>%
+  group_by(yearSeason, hierarchicalcluster) %>%
+  summarize(count = n())
+
+
+#allnba kmean and hierarchical clusters over time
+kmeansclustergraphallnba <-
+  ggplot(data = clustercountkmeansallnba, 
+         mapping = aes(x = yearSeason, y = count, color = kmeanscluster)) +
+  geom_point() +
+  ylim(-.5,7)
+kmeansclustergraphallnba
+
+hierarchicalgraphallnba <-
+  ggplot(data = clustercounthierchallnba, 
+         mapping = aes(x = yearSeason, y = count,
+                       color = hierarchicalcluster)) +
+  geom_point() +
+  ylim(-.5,7)
+hierarchicalgraphallnba
+
+#all nba player's clusters over time
+n_pcas_kmeans <- n_pcas_kmeans %>%
+  mutate(yearSeason = d$yearSeason) 
+n_pcas_hier <- n_pcas_hier %>%
+    mutate(yearSeason = d$yearSeason) 
+nbakmeans <- 
+  ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) +
+  geom_point()+
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+nbahierch <- 
+  ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + 
+  geom_point()+
+  ylab("Shooters vs Baseline") +
+  xlab("Usage vs Non-Usage")
+  
+byseasonplotkmeans  <- nbakmeans + transition_time(yearSeason) +
+  labs(title = "Season: {frame_time}") 
+animate(byseasonplotkmeans, 
+        renderer = gifski_renderer(), nframes = 36, fps = 2)
+byseasonplothierch <- nbahierch + transition_time(yearSeason) +
+  labs(title = "Season: {frame_time}")
+animate(byseasonplothierch, 
+        renderer = gifski_renderer(), nframes = 36, fps = 2)
+
+```
+
+
+
+
+
+```{r}
 n_pcas_all_nba <- as_tibble(pca_all_nba$x[,1:3])
 n_clusters_kmeans_all_nba <-kmeans(n_pcas_all_nba, centers = 3)
 n_clusters_hier_all_nba <-hclust(dist(n_pcas_all_nba))
@@ -511,8 +597,10 @@ n_clusters_hier_cut_all_nba <- cutree(n_clusters_hier_all_nba, 3)
 n_pcas_kmeans_all_nba <- n_pcas_all_nba %>% mutate(cluster = n_clusters_kmeans_all_nba$cluster)
 n_pcas_hier_all_nba <- n_pcas_all_nba %>% mutate(cluster = n_clusters_hier_cut_all_nba)
 
-ggplot(n_pcas_kmeans_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
-ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+ggplot(n_pcas_kmeans_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point() +
+  labs(title = "kmeans clustering")
+ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point() +
+  labs(title = "hierarchical clustering")
 
 #plot_ly(n_pcas_hier_all_nba, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
 
@@ -537,9 +625,11 @@ cluster_proportions_3_all_nba = players_post1984_pca_clusters_year_3_all_nba$n/p
 
 cluster_proportions_all_nba <- tibble(year = c(1984:2019), one = cluster_proportions_1_all_nba, two = cluster_proportions_2_all_nba, three = cluster_proportions_3_all_nba)
 
+#Red: first cluster, Blue: second cluster, Green: third cluster
 ggplot(cluster_proportions_all_nba, aes(x = year, y = one))+geom_line(color = "red")+
   geom_line(aes(x = year, y = two), color = "blue")+
-  geom_line(aes(x = year, y = three), color = "green")
+  geom_line(aes(x = year, y = three), color = "green") +
+  labs(y ="Proportion")
 
 
 ```
@@ -561,6 +651,18 @@ typical for tall, big players:pctDRB, pctTRB, blkPerGame.
 PC3 is the distinction between "Outside the Arc" (-) and "Inside the Arc" (+)
 Extreme negative values appear for pctTrueShooting, pctEFG, pct3PRate. On 
 the positive side, we see tovPerGame, pctUSG, pctBLK, and fg2aPerGame. 
+
+### Clustering
+Using Hierarchical clustering, we were able to break down players into 3
+"types": 
+Cluster 1: lower usage, spread in shootting/baseline, and spread in outside/
+inside the arc
+Cluster 2: spread in usage, 
+
+
+
+
+###
 
 ## References
 
