@@ -312,7 +312,7 @@ pcaplot <- ggplot(d, aes(x = PC1, y = PC2)) +
   xlab("Usage vs Non-Usage")
 pcaplot
 
-d1 <- data.frame(PC = 1:43,
+d1 <- tibble(PC = 1:43,
                 PVE = pca$sdev^2 /
                   sum(pca$sdev^2))
 
@@ -321,10 +321,10 @@ ggplot(d1, aes(x = PC, y = PVE)) +
   geom_point()
 
 #some PCA exploration
-pcarotations <- data.frame(pca$rotation)
-pcarotations$variables <- rownames(pcarotations)
+pca_rotations <- data.frame(pca$rotation)
+pca_rotations$variables <- rownames(pca_rotations)
 PC1graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC1, 
+  ggplot(data = pca_rotations, mapping = aes(x = variables, y = PC1, 
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
@@ -334,7 +334,7 @@ PC1graph
 
 #note important characteristics: tov, pts, minutes, fgm, fga
 PC2graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC2, 
+  ggplot(data = pca_rotations, mapping = aes(x = variables, y = PC2, 
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
@@ -344,7 +344,7 @@ PC2graph
 
 #note important characteristics: (+) rebounding stats, (-) 3pt shooting, asts
 PC3graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC3, 
+  ggplot(data = pca_rotations, mapping = aes(x = variables, y = PC3, 
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
@@ -456,7 +456,7 @@ d_all_nba <- as_tibble(pca_all_nba$x)
 ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .7)
 
-d2 <- data.frame(PC = 1:43,
+d2 <- tibble(PC = 1:43,
                 PVE = pca$sdev^2 /
                   sum(pca$sdev^2))
 
@@ -464,7 +464,7 @@ ggplot(d2, aes(x = PC, y = PVE)) +
   geom_line() + 
   geom_point()
 
-pca_all_nba_rotations <- data.frame(pca_all_nba$rotation)
+pca_all_nba_rotations <- tibble(pca_all_nba$rotation)
 pca_all_nba_rotations$variables <- rownames(pca_all_nba_rotations)
 
 PC1_all_nba_graph <- 
