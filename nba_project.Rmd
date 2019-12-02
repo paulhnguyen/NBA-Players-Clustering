@@ -451,7 +451,7 @@ players_post1984_pca_clusters_year
 
 ```{r}
 pca_all_nba <- prcomp(players_post1984_all_nba_normalized[,-c(1:5, 49)])
-d_all_nba <- as_tibble(pca_all_nba$x)
+d_all_nba <- as.data.frame(pca_all_nba$x)
 
 ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .7)
@@ -464,7 +464,7 @@ ggplot(d2, aes(x = PC, y = PVE)) +
   geom_line() + 
   geom_point()
 
-pca_all_nba_rotations <- tibble(pca_all_nba$rotation)
+pca_all_nba_rotations <- data.frame(pca_all_nba$rotation)
 pca_all_nba_rotations$variables <- rownames(pca_all_nba_rotations)
 
 PC1_all_nba_graph <- 

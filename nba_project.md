@@ -25,7 +25,7 @@ those websites.
 
 Our unit of observation is a player during one season. Our original
 dataset consists of 21235 observations and 75 variables, but we’ve
-reduced this number to 10223 observations after selecting seasons after
+reduced this number to 10223 observations after selecting seasonsafter
 1983 and players that have played in at least 600 minutes in the season.
 We’ve also taken out some unnecessary variables to make a 11695
 observation, 49 variable dataset.
@@ -503,7 +503,7 @@ pcaplot
 ![](nba_project_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
-d1 <- data.frame(PC = 1:43,
+d1 <- tibble(PC = 1:43,
                 PVE = pca$sdev^2 /
                   sum(pca$sdev^2))
 
@@ -516,10 +516,10 @@ ggplot(d1, aes(x = PC, y = PVE)) +
 
 ``` r
 #some PCA exploration
-pcarotations <- data.frame(pca$rotation)
-pcarotations$variables <- rownames(pcarotations)
+pca_rotations <- data.frame(pca$rotation)
+pca_rotations$variables <- rownames(pca_rotations)
 PC1graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC1, 
+  ggplot(data = pca_rotations, mapping = aes(x = variables, y = PC1, 
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
@@ -533,7 +533,7 @@ PC1graph
 ``` r
 #note important characteristics: tov, pts, minutes, fgm, fga
 PC2graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC2, 
+  ggplot(data = pca_rotations, mapping = aes(x = variables, y = PC2, 
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
@@ -547,7 +547,7 @@ PC2graph
 ``` r
 #note important characteristics: (+) rebounding stats, (-) 3pt shooting, asts
 PC3graph <- 
-  ggplot(data = pcarotations, mapping = aes(x = variables, y = PC3, 
+  ggplot(data = pca_rotations, mapping = aes(x = variables, y = PC3, 
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
@@ -674,13 +674,16 @@ players_post1984_pca_clusters_year_3 <- players_post1984_pca_clusters_year %>%
 cluster_proportions_1 = players_post1984_pca_clusters_year_1$n/players_post1984_pca_year$n
 cluster_proportions_2 = players_post1984_pca_clusters_year_2$n/players_post1984_pca_year$n
 cluster_proportions_3 = players_post1984_pca_clusters_year_3$n/players_post1984_pca_year$n
-
 cluster_proportions <- tibble(year = c(1984:2020), one = cluster_proportions_1, two = cluster_proportions_2, three = cluster_proportions_3)
 
-proportions_by_year_plot <- ggplot(cluster_proportions, aes(x = year, y = one), color = "red")+geom_line()+
+ggplot(cluster_proportions, aes(x = year, y = one), color = "red")+geom_line()+
   geom_line(aes(x = year, y = two), color = "blue")+
   geom_line(aes(x = year, y = three), color = "yellow")
+```
 
+![](nba_project_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
+
+``` r
 players_post1984_pca_clusters_year
 ```
 
@@ -702,7 +705,7 @@ players_post1984_pca_clusters_year
 
 ``` r
 pca_all_nba <- prcomp(players_post1984_all_nba_normalized[,-c(1:5, 49)])
-d_all_nba <- as_tibble(pca_all_nba$x)
+d_all_nba <- as.data.frame(pca_all_nba$x)
 
 ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .7)
@@ -711,7 +714,7 @@ ggplot(d, aes(x = PC1, y = PC2)) +
 ![](nba_project_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-d2 <- data.frame(PC = 1:43,
+d2 <- tibble(PC = 1:43,
                 PVE = pca$sdev^2 /
                   sum(pca$sdev^2))
 
