@@ -1,6 +1,7 @@
 ---
 title: "NBA Modern Positions"
 output: github_document
+always_allow_html: true
 ---
 
 ```{r,warning = FALSE, message = FALSE}
@@ -10,6 +11,7 @@ library(tidyverse)
 library(BBmisc)
 library(corrplot)
 library(gganimate)
+library(plotly)
 ```
 
 ## Abstract
@@ -68,6 +70,7 @@ players_post1984_normalized <- players_1984
 for(year in 1985:2020){
   eval(parse(text = paste( "players_post1984_normalized <- rbind(players_post1984_normalized, players_",year,")", sep = "")))
 }
+players_post1984_all_nba_normalized <- players_post1984_normalized %>% filter(isAllNBA == TRUE)
 ```
 
 ### Variables used:
@@ -162,6 +165,7 @@ PC1graph <-
   theme(legend.position = "none") +
   labs(title = "Usage (-) vs Non-Usage (+)")
 PC1graph
+
 #note important characteristics: tov, pts, minutes, fgm, fga
 PC2graph <- 
   ggplot(data = pcarotations, mapping = aes(x = variables, y = PC2, 
@@ -171,6 +175,7 @@ PC2graph <-
   theme(legend.position = "none")+
   labs(title = "Shooters vs Baseline")
 PC2graph
+
 #note important characteristics: (+) rebounding stats, (-) 3pt shooting, asts
 PC3graph <- 
   ggplot(data = pcarotations, mapping = aes(x = variables, y = PC3, 
@@ -233,7 +238,6 @@ byseasonplot <- staticplot + transition_time(yearSeason) +
 animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
 
 ```
-
 ```{r}
 #to do: k-means clustering, hierchical clustering
 n_pcas <- as_tibble(pca$x[,1:3])
@@ -249,7 +253,77 @@ n_pcas_hier <- n_pcas %>% mutate(cluster = n_clusters_hier_cut)
 ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
 ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
 
+plot_ly(n_pcas_hier, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
 ```
+
+```{r}
+pca_all_nba <- prcomp(players_post1984_all_nba_normalized[,-c(1:5, 49)])
+d_all_nba <- as_tibble(pca_all_nba$x)
+
+ggplot(d, aes(x = PC1, y = PC2)) +
+  geom_point(size = .5, alpha = .7)
+
+d2 <- data.frame(PC = 1:43,
+                PVE = pca$sdev^2 /
+                  sum(pca$sdev^2))
+
+ggplot(d2, aes(x = PC, y = PVE)) +
+  geom_line() + 
+  geom_point()
+
+pca_all_nba_rotations <- data.frame(pca_all_nba$rotation)
+pca_all_nba_rotations$variables <- rownames(pca_all_nba_rotations)
+
+PC1_all_nba_graph <- 
+  ggplot(data = pca_all_nba_rotations, mapping = aes(x = variables, y = PC1, 
+                                          fill = variables)) +
+  geom_col()+
+  coord_flip()+
+  theme(legend.position = "none")
+PC1_all_nba_graph
+
+PC2_all_nba_graph <- 
+  ggplot(data = pca_all_nba_rotations, mapping = aes(x = variables, y = PC2, 
+                                          fill = variables)) +
+  geom_col()+
+  coord_flip()+
+  theme(legend.position = "none")
+PC2_all_nba_graph
+
+PC3_all_nba_graph <- 
+  ggplot(data = pca_all_nba_rotations, mapping = aes(x = variables, y = PC3, 
+                                          fill = variables)) +
+  geom_col()+
+  coord_flip()+
+  theme(legend.position = "none")
+PC3_all_nba_graph
+
+PC4_all_nba_graph <- 
+  ggplot(data = pca_all_nba_rotations, mapping = aes(x = variables, y = PC4, 
+                                          fill = variables)) +
+  geom_col()+
+  coord_flip()+
+  theme(legend.position = "none")
+PC4_all_nba_graph
+```
+
+```{r}
+n_pcas_all_nba <- as_tibble(pca_all_nba$x[,1:3])
+n_clusters_kmeans_all_nba <-kmeans(n_pcas_all_nba, centers = 8)
+n_clusters_hier_all_nba <-hclust(dist(n_pcas_all_nba))
+n_clusters_hier_plot_all_nba<-plot(n_clusters_hier_all_nba)
+
+n_clusters_hier_cut_all_nba <- cutree(n_clusters_hier_all_nba, 10)
+
+n_pcas_kmeans_all_nba <- n_pcas_all_nba %>% mutate(cluster = n_clusters_kmeans_all_nba$cluster)
+n_pcas_hier_all_nba <- n_pcas_all_nba %>% mutate(cluster = n_clusters_hier_cut_all_nba)
+
+ggplot(n_pcas_kmeans_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+
+plot_ly(n_pcas_hier_all_nba, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
+```
+
 
 ## Discussion
 
