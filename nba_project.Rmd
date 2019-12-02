@@ -20,58 +20,16 @@ library(plotly)
 
 ### The data
 
-#### Provenance
-
 We obtained our datasets from basketball-reference.com and stats.nba.com.
 We used the R package `nbastatR` to obtain the data from those websites.
 
 #### Unit of observation and Variables
 
 Our unit of observation is a player during one season.
-Our original dataset consists of 21235 observations  and 75 variables, but we've reduced this number to 
-10223 observations after selecting seasons after 1983 and players that have played in at least 600 minutes in the season.
-We've also taken out some unnecessary variables to make a 11695 observation, 49 variable dataset. 
-We have included descriptions of the variables at the bottom of the page.
-
-```{r message = FALSE, warning = FALSE, cache = TRUE}
-# Gets player stats from 1984 to 2020.
-players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE, return_message = FALSE)
-
-# Filters by amount of time they played.
-ggplot(players_post1984, mapping = aes(x = minutes)) + 
-   geom_histogram() +
-   geom_vline(xintercept = 600)
- players_post1984 <- filter(players_post1984, minutes > 600)
-
- # Variables to drop
-dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF",
-             "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
-             "slugPosition","urlPlayerPhoto", "urlPlayerStats",
-             "urlPlayerActionPhoto","yearSeasonFirst",
-             "countTeamsPlayerSeason","countGamesStarted",
-             "isSeasonCurrent","slugPlayerSeason", "agePlayer",
-             "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF", 
-             "countTeamsPlayerSeasonPerGame", "groupAllNBA",
-             "numberAllNBATeam", "isAllNBA2", "isAllNBA1",
-             "isAllNBA3" )
-# Dropping variables
-players_post1984 <- players_post1984[,!(names(players_post1984) %in% dropping)]
-
-# Groups players by season, and normalizes by season.
-for(year in 1984:2020){
-  eval(parse(text = paste( "players_",year," <- filter(players_post1984, yearSeason == ",year,")", sep = "" )))
-  for(i in 6:48){
-    eval(parse(text = paste( "players_",year,"[,",i,"] <- normalize(players_",year,"[,",i,"],method = 'range', range = c(0,1))", sep = "")))
-  }
-}
-
-# Ungroups players by season.
-players_post1984_normalized <- players_1984
-for(year in 1985:2020){
-  eval(parse(text = paste( "players_post1984_normalized <- rbind(players_post1984_normalized, players_",year,")", sep = "")))
-}
-players_post1984_all_nba_normalized <- players_post1984_normalized %>% filter(isAllNBA == TRUE)
-```
+Our original dataset consists of 21235 observations  and 75 variables, but we've reduced this number to  10223 observations after selecting seasons
+after 1983 and players that have played in at least 600 minutes in the
+season. We've also taken out some unnecessary variables to make a 11695
+observation, 49 variable dataset. 
 
 ### Variables used:
 #### Shooting:
@@ -126,8 +84,219 @@ players_post1984_all_nba_normalized <- players_post1984_normalized %>% filter(is
 - minutesPerGame: Minutes Per Game
 - pctUSG: Usage Percentage. (100 * ((FGA + 0.44 * FTA + TOV) * (Tm MP / 5)) / (MP * (Tm FGA + 0.44 * Tm FTA + Tm TOV))
 
-## Modeling
+#### Other
+- namePlayer: Name of player
+- groupPosition: Player Position. Either Guard, Forward, or Center
+- yearSeason: Season year
+- countGames: Games played during season
+- minutes: Minutes played during season
+- isAllNBA: Did player make season's all NBA team?
 
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+# Gets player stats from 1984 to 2020.
+players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE, return_message = FALSE)
+
+# Filters by amount of time they played.
+ggplot(players_post1984, mapping = aes(x = minutes)) + 
+   geom_histogram() +
+   geom_vline(xintercept = 600)
+ players_post1984 <- filter(players_post1984, minutes > 600)
+
+ # Variables to drop
+dropping <-c("slugSeason", "idPlayerNBA", "namePlayerBREF", "urlPlayerBREF",
+             "slugPlayerBREF", "urlPlayerThumbnail", "urlPlayerHeadshot",
+             "slugPosition","urlPlayerPhoto", "urlPlayerStats",
+             "urlPlayerActionPhoto","yearSeasonFirst",
+             "countTeamsPlayerSeason","countGamesStarted",
+             "isSeasonCurrent","slugPlayerSeason", "agePlayer",
+             "slugTeamBREF", "isHOFPlayer", "slugTeamsBREF", 
+             "countTeamsPlayerSeasonPerGame", "groupAllNBA",
+             "numberAllNBATeam", "isAllNBA2", "isAllNBA1",
+             "isAllNBA3" )
+# Dropping variables
+players_post1984 <- players_post1984[,!(names(players_post1984) %in% dropping)]
+
+# Groups players by season, and normalizes by season.
+for(year in 1984:2020){
+  eval(parse(text = paste( "players_",year," <- filter(players_post1984, yearSeason == ",year,")", sep = "" )))
+  for(i in 6:48){
+    eval(parse(text = paste( "players_",year,"[,",i,"] <- normalize(players_",year,"[,",i,"],method = 'range', range = c(0,1))", sep = "")))
+  }
+}
+
+# Ungroups players by season.
+players_post1984_normalized <- players_1984
+for(year in 1985:2020){
+  eval(parse(text = paste( "players_post1984_normalized <- rbind(players_post1984_normalized, players_",year,")", sep = "")))
+}
+players_post1984_all_nba_normalized <- players_post1984_normalized %>% filter(isAllNBA == TRUE)
+```
+
+## Exploratory Data Analysis
+
+```{r}
+#some summary statistics
+summarystatistics1984 <- players_post1984 %>%
+  group_by(yearSeason, groupPosition) %>%
+  summarize(meanpctFTRate = mean(pctFTRate),
+            meanpct3PRate = mean(pct3PRate),
+            meanpctFG = mean(pctFG),
+            meanpctFG3 = mean(pctFG3),
+            meanpctFG2 = mean(pctFG2),
+            meanpctEFG = mean(pctEFG),
+            meanpctFT = mean(pctFT),
+            meanfgmPerGame = mean(fgmPerGame),
+            meanfgaPerGame = mean(fgaPerGame),
+            meanfg3mPerGame = mean(fg3mPerGame),
+            meanfg3aPerGame = mean(fg3aPerGame),
+            meanfg2mPerGame = mean(fg2mPerGame),
+            meanfg2aPerGame = mean(fg2aPerGame),
+            meanftmPerGame = mean(ftmPerGame),
+            meanftaPerGame = mean(ftaPerGame),
+            meanptsPerGame = mean(ptsPerGame),
+            meanpctORB = mean(pctORB),
+            meanpctTRB = mean(pctTRB),
+            meanpctDRB = mean(pctDRB),
+            meanorbPerGame = mean(orbPerGame),
+            meandrbPerGame = mean (drbPerGame),
+            meantrbPerGame = mean(trbPerGame),
+            meanpctAST = mean(pctAST),
+            meanpctTOV = mean(pctTOV),
+            meanastPerGame = mean(astPerGame),
+            meantovPerGame = mean(tovPerGame),
+            meanpctSTL = mean(pctSTL),
+            meanpctBLK = mean(pctBLK),
+            meanstlPerGame = mean(stlPerGame),
+            meanblkPerGame = mean(blkPerGame),
+            meanpfPerGame = mean(pfPerGame),
+            meanratioOWS = mean(ratioOWS),
+            meanratioDWS = mean(ratioDWS),
+            meanratioWS = mean(ratioWS),
+            meanratioWSPer48 = mean(ratioWSPer48),
+            meanratioOBPM = mean(ratioOBPM),
+            meanratioDBPM = mean(ratioDBPM),
+            meanratioBPM = mean(ratioBPM),
+            meanratioVORP = mean(ratioVORP),
+            sdpctFTRate = sd(pctFTRate),
+            sdpct3PRate = sd(pct3PRate),
+            sdpctFG = sd(pctFG),
+            sdpctFG3 = sd(pctFG3),
+            sdpctFG2 = sd(pctFG2),
+            sdpctEFG = sd(pctEFG),
+            sdpctFT = sd(pctFT),
+            sdfgmPerGame = sd(fgmPerGame),
+            sdfgaPerGame = sd(fgaPerGame),
+            sdfg3mPerGame = sd(fg3mPerGame),
+            sdfg3aPerGame = sd(fg3aPerGame),
+            sdfg2mPerGame = sd(fg2mPerGame),
+            sdfg2aPerGame = sd(fg2aPerGame),
+            sdftmPerGame = sd(ftmPerGame),
+            sdftaPerGame = sd(ftaPerGame),
+            sdptsPerGame = sd(ptsPerGame),
+            sdpctORB = sd(pctORB),
+            sdpctTRB = sd(pctTRB),
+            sdpctDRB = sd(pctDRB),
+            sdorbPerGame = sd(orbPerGame),
+            sddrbPerGame = sd (drbPerGame),
+            sdtrbPerGame = sd(trbPerGame),
+            sdpctSTL = sd(pctSTL),
+            sdpctBLK = sd(pctBLK),
+            sdstlPerGame = sd(stlPerGame),
+            sdblkPerGame = sd(blkPerGame),
+            sdpfPerGame = sd(pfPerGame),
+            sdratioOWS = sd(ratioOWS),
+            sdratioDWS = sd(ratioDWS),
+            sdratioWS = sd(ratioWS),
+            sdratioWSPer48 = sd(ratioWSPer48),
+            sdratioOBPM = sd(ratioOBPM),
+            sdratioDBPM = sd(ratioDBPM),
+            sdratioBPM = sd(ratioBPM),
+            sdratioVORP = sd(ratioVORP)
+            )
+head(summarystatistics1984)
+ggplot(data = summarystatistics1984, mapping = aes(x = yearSeason, y = meanpctFG, color = groupPosition)) + 
+  geom_line()
+#taking a look at some stats over time, grouped by year and position
+#fg pct
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanpctFG, color = groupPosition)) +  geom_line()
+#3FGPct, see the introduction of 3 point line
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanpctFG3,
+                     color = groupPosition)) +
+  geom_line()
+#meanFGM
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfgmPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanFGA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfgaPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#mean3FGM 
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfg3mPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#mean3FGA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanfg3aPerGame, color = groupPosition)) +
+  geom_line()
+#meanFTA
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanftaPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanFTM
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanftmPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanORB
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanorbPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanDRB
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meandrbPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanAST
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanastPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanSTL
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanstlPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanBLK
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanblkPerGame,
+                     color = groupPosition)) +
+  geom_line()
+#meanTOV
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meantovPerGame, 
+                     color = groupPosition)) +
+  geom_line()
+#meanPTS
+ggplot(data = summarystatistics1984, 
+       mapping = aes(x = yearSeason, y = meanptsPerGame,
+                     color = groupPosition)) +
+  geom_line()
+
+#also a correlation matrix plot
+rcorr <- round(cor(players_post1984_normalized[,c(5:48)]),2)
+corrplot(rcorr, method="color")
+```
+
+
+## Modeling
 ```{r}
 pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
 d <- as.data.frame(pca$x)
@@ -184,7 +353,8 @@ PC3graph <-
   coord_flip() +
   theme(legend.position = "none")
 PC3graph
-#idk this one seems pretty hard to interpret lol
+#important characteristics: (+) turnovers, usage, field goals worth 2
+#                            (-) True shooting, EFG, 3 pointers
 
 #lets now create a plot with some players that we will recognize
 currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
@@ -238,8 +408,8 @@ byseasonplot <- staticplot + transition_time(yearSeason) +
 animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
 
 ```
+
 ```{r}
-#to do: k-means clustering, hierchical clustering
 n_pcas <- as_tibble(pca$x[,1:3])
 n_clusters_kmeans<-kmeans(n_pcas, centers = 8)
 n_clusters_hier<-hclust(dist(n_pcas))
@@ -324,6 +494,27 @@ ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point
 plot_ly(n_pcas_hier_all_nba, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
 ```
 
+```{r}
+#counts
+nbaclusters <- tibble(n_pcas_kmeans_all_nba$cluster, 
+                          n_pcas_hier_all_nba$cluster,
+                          allnbaplayerspca$yearSeason) %>%
+  mutate(kmeanscluster=n_pcas_kmeans_all_nba$cluster ,
+         hierarchicalcluster = n_pcas_hier_all_nba$cluster,
+         yearSeason= allnbaplayerspca$yearSeason)
+nbaclusters <- nbaclusters[,-c(1:3)]
+
+
+#to do: figure this out
+clustercount <- nbaclusters %>%
+  group_by(yearSeason) 
+  count
+  summarize(nkmean = n(kmeanscluster),
+            nhierchical = n(hierarchicalcluster))
+  
+
+
+```
 
 ## Discussion
 
@@ -334,10 +525,13 @@ In the negative side, we see characteristics such as ptsPerGame,
 fgmPerGame, fg2mPerGame, fg2aPerGame. The other types of variables 
 do not tend to take on positive values, but the ones that are include:
 pctBLK, pctSTL, pctTOV.  
-
 Looking at PC2, I would describe this as "Shooters" (-) vs "Baseline" (+).
 We see negative values for shooting characteristics, such as pct3PRate, 
 fg3mPerGame, fg3aPerGame, and positive values for characteristics 
 typical for tall, big players:pctDRB, pctTRB, blkPerGame.
+PC3 is the distinction between "Outside the Arc" (-) and "Inside the Arc" (+)
+Extreme negative values appear for pctTrueShooting, pctEFG, pct3PRate. On 
+the positive side, we see tovPerGame, pctUSG, pctBLK, and fg2aPerGame. 
 
 ## References
+
