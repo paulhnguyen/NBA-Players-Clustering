@@ -3,7 +3,7 @@ title: "NBA Modern Positions"
 output: github_document
 ---
 
-```{r,warning = FALSE ,message = FALSE}
+```{r,warning = FALSE, message = FALSE}
 #load necessary libraries
 library(nbastatR)
 library(tidyverse)
@@ -12,9 +12,28 @@ library(corrplot)
 library(gganimate)
 ```
 
+## Abstract
+
+## Introduction
+
+### The data
+
+#### Provenance
+
+We obtained our datasets from basketball-reference.com and stats.nba.com.
+We used the R package `nbastatR` to obtain the data from those websites.
+
+#### Unit of observation and Variables
+
+Our unit of observation is a player during one season.
+Our original dataset consists of 21235 observations  and 75 variables, but we've reduced this number to 
+10223 observations after selecting seasons after 1983 and players that have played in at least 600 minutes in the season.
+We've also taken out some unnecessary variables to make a 11695 observation, 49 variable dataset. 
+We have included descriptions of the variables at the bottom of the page.
+
 ```{r message = FALSE, warning = FALSE, cache = TRUE}
 # Gets player stats from 1984 to 2020.
-players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE, return_message = FALSE)
 
 # Filters by amount of time they played.
 ggplot(players_post1984, mapping = aes(x = minutes)) + 
@@ -50,6 +69,61 @@ for(year in 1985:2020){
   eval(parse(text = paste( "players_post1984_normalized <- rbind(players_post1984_normalized, players_",year,")", sep = "")))
 }
 ```
+
+### Variables used:
+#### Shooting:
+- pctFTRate: The percentage of total field goal attempts that are Free Throws.
+- pct3PRate: The percentage of total field goal attempts that are 3-pt shots.
+- pctFG: Field Goal Percentage.
+- pctFG3: Field Goal 3-pt Percentage.
+- pctFG2: Field Goal 2-pt Percentage.
+- pctEFG: Effective Field Goal Percentage. (FGM + (0.5 * 3PM)/FGA). This statistic adjusts for the fact that a 3-pt field goal is worth one more point than a regular 2-pt field goal.
+- pctFT: Free Throw Percentage.
+- fgmPerGame: Field Goal Made per Game.
+- fgaPerGame: Field Goal Attempts per game
+- fg3mPerGame: Field Goal Made (3-pt) per game.
+- fg3aPerGame: Field Goal Attempts (3-pt) per game.
+- fg2mPerGame: Field Goal Made (2-pt) per game.
+- fg2aPerGame: Field Goal Attempts (2-pt) per game.
+- ftmPerGame: Free Throws Made per game.
+- ftaPerGame: Free Throw Attempts per game.
+- ptsPerGame: Points per game.
+
+#### Rebounds
+- pctORB: Offensive Rebound Percentage (Rebound Rate).
+- pctTRB: Total Rebound Percentage (Rebound Rate).
+- pctDRB: Deffensive Rebound Percentage (Rebound Rate).
+- orbPerGame: Offensive Rebounds per game.
+- drbPerGame: Deffensive Rebounds per game.
+- trbPerGame: Total Rebounds per game.
+
+#### Passing
+- pctAST: Assists Percentage.
+- pctTOV: Turnover Percentage.
+- astPerGame: Assists per game.
+- tovPerGame: Turnovers per game.
+
+#### Defense
+- pctSTL: Steals percentage.
+- pctBLK: Blocks percentage.
+- stlPerGame: Steals per game.
+- blkPerGame: Blocks per game.
+- pfPerGame: Personal Fouls per game.
+
+#### Efficiency stats
+- ratioPER: Player Efficiency Rating
+- ratioOWS: Offensive Win Shares.
+- ratioDWS: Deffensive Win Shares.
+- ratioWS: Win Shares.
+- ratioWSPer48: Win Shares per 48 minutes.
+- ratioOBPM: Offensive Box Plus/Minus.
+- ratioDBPM: Deffensive Box Plus/Minus.
+- ratioBPM: Box Plus/Minus.
+- ratioVORP: Value Over Replacement Player.
+- minutesPerGame: Minutes Per Game
+- pctUSG: Usage Percentage. (100 * ((FGA + 0.44 * FTA + TOV) * (Tm MP / 5)) / (MP * (Tm FGA + 0.44 * Tm FTA + Tm TOV))
+
+## Modeling
 
 ```{r}
 pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
@@ -176,3 +250,20 @@ ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
 ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
 
 ```
+
+## Discussion
+
+### Looking at PCA (Principal Component Analysis)
+
+PC1 seems to be a case of an "Usage" (-) vs "Non-Usage" (+) battle.
+In the negative side, we see characteristics such as ptsPerGame,
+fgmPerGame, fg2mPerGame, fg2aPerGame. The other types of variables 
+do not tend to take on positive values, but the ones that are include:
+pctBLK, pctSTL, pctTOV.  
+
+Looking at PC2, I would describe this as "Shooters" (-) vs "Baseline" (+).
+We see negative values for shooting characteristics, such as pct3PRate, 
+fg3mPerGame, fg3aPerGame, and positive values for characteristics 
+typical for tall, big players:pctDRB, pctTRB, blkPerGame.
+
+## References

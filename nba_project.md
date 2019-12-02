@@ -10,85 +10,33 @@ library(corrplot)
 library(gganimate)
 ```
 
+## Abstract
+
+## Introduction
+
+### The data
+
+#### Provenance
+
+We obtained our datasets from basketball-reference.com and
+stats.nba.com. We used the R package `nbastatR` to obtain the data from
+those websites.
+
+#### Unit of observation and Variables
+
+Our unit of observation is a player during one season. Our original
+dataset consists of 21235 observations and 75 variables, but we’ve
+reduced this number to 10223 observations after selecting seasons after
+1983 and players that have played in at least 600 minutes in the season.
+We’ve also taken out some unnecessary variables to make a 11695
+observation, 49 variable dataset. We have included descriptions of the
+variables at the bottom of the page.
+
 ``` r
 # Gets player stats from 1984 to 2020.
-players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE)
+players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced", "per_game"), include_all_nba = TRUE, return_message = FALSE)
 ```
 
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1984_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1985_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1986_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1987_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1988_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1989_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1990_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1991_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1992_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1993_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1994_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1995_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1996_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1997_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1998_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1999_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2000_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2001_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2002_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2003_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2004_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2005_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2006_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2007_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2008_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2009_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2010_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2011_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2012_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2013_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2014_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2015_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2016_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2017_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2018_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2019_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2020_advanced.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1984_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1985_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1986_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1987_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1988_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1989_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1990_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1991_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1992_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1993_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1994_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1995_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1996_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1997_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1998_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_1999_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2000_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2001_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2002_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2003_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2004_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2005_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2006_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2007_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2008_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2009_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2010_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2011_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2012_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2013_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2014_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2015_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2016_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2017_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2018_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2019_per_game.html
-    ## parsed http://www.basketball-reference.com/leagues/NBA_2020_per_game.html
     ## Advanced
     ## Assigning NBA player dictionary to df_dict_nba_players to your environment
     ## PerGame
@@ -134,6 +82,72 @@ for(year in 1985:2020){
 }
 ```
 
+### Variables used:
+
+#### Shooting:
+
+  - pctFTRate: The percentage of total field goal attempts that are Free
+    Throws.
+  - pct3PRate: The percentage of total field goal attempts that are 3-pt
+    shots.
+  - pctFG: Field Goal Percentage.
+  - pctFG3: Field Goal 3-pt Percentage.
+  - pctFG2: Field Goal 2-pt Percentage.
+  - pctEFG: Effective Field Goal Percentage. (FGM + (0.5 \* 3PM)/FGA).
+    This statistic adjusts for the fact that a 3-pt field goal is worth
+    one more point than a regular 2-pt field goal.
+  - pctFT: Free Throw Percentage.
+  - fgmPerGame: Field Goal Made per Game.
+  - fgaPerGame: Field Goal Attempts per game
+  - fg3mPerGame: Field Goal Made (3-pt) per game.
+  - fg3aPerGame: Field Goal Attempts (3-pt) per game.
+  - fg2mPerGame: Field Goal Made (2-pt) per game.
+  - fg2aPerGame: Field Goal Attempts (2-pt) per game.
+  - ftmPerGame: Free Throws Made per game.
+  - ftaPerGame: Free Throw Attempts per game.
+  - ptsPerGame: Points per game.
+
+#### Rebounds
+
+  - pctORB: Offensive Rebound Percentage (Rebound Rate).
+  - pctTRB: Total Rebound Percentage (Rebound Rate).
+  - pctDRB: Deffensive Rebound Percentage (Rebound Rate).
+  - orbPerGame: Offensive Rebounds per game.
+  - drbPerGame: Deffensive Rebounds per game.
+  - trbPerGame: Total Rebounds per game.
+
+#### Passing
+
+  - pctAST: Assists Percentage.
+  - pctTOV: Turnover Percentage.
+  - astPerGame: Assists per game.
+  - tovPerGame: Turnovers per game.
+
+#### Defense
+
+  - pctSTL: Steals percentage.
+  - pctBLK: Blocks percentage.
+  - stlPerGame: Steals per game.
+  - blkPerGame: Blocks per game.
+  - pfPerGame: Personal Fouls per game.
+
+#### Efficiency stats
+
+  - ratioPER: Player Efficiency Rating
+  - ratioOWS: Offensive Win Shares.
+  - ratioDWS: Deffensive Win Shares.
+  - ratioWS: Win Shares.
+  - ratioWSPer48: Win Shares per 48 minutes.
+  - ratioOBPM: Offensive Box Plus/Minus.
+  - ratioDBPM: Deffensive Box Plus/Minus.
+  - ratioBPM: Box Plus/Minus.
+  - ratioVORP: Value Over Replacement Player.
+  - minutesPerGame: Minutes Per Game
+  - pctUSG: Usage Percentage. (100 \* ((FGA + 0.44 \* FTA + TOV) \* (Tm
+    MP / 5)) / (MP \* (Tm FGA + 0.44 \* Tm FTA + Tm TOV))
+
+## Modeling
+
 ``` r
 pca <- prcomp(players_post1984_normalized[,-c(1:5, 49)])
 d <- as.data.frame(pca$x)
@@ -142,23 +156,23 @@ pc1
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##   -0.1983005970   -0.1093611304    0.0446114991   -0.0647713332    0.0009161219 
+    ##   -0.1983625651   -0.1096560289    0.0450415240   -0.0645939906    0.0008473103 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##   -0.0700374947   -0.0607858529   -0.0727580277    0.0245108654    0.0212159135 
+    ##   -0.0703342253   -0.0610925823   -0.0726174793    0.0243398447    0.0213361996 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##    0.0472907155   -0.1560062675   -0.1734807205   -0.1600089366   -0.1981641340 
+    ##    0.0473415150   -0.1558420993   -0.1733695953   -0.1601178810   -0.1980718041 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##   -0.1544842420   -0.1718822222   -0.0538801002   -0.1726861352   -0.1729401844 
+    ##   -0.1545547328   -0.1716825298   -0.0541296497   -0.1727587240   -0.1730167817 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##   -0.0889145670   -0.0305770644   -0.0863343808   -0.0805329326   -0.0432231125 
+    ##   -0.0890130179   -0.0301497723   -0.0867476037   -0.0808641061   -0.0431294379 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##   -0.2998895356   -0.2521327630   -0.2396053072   -0.0744153019   -0.0769013838 
+    ##   -0.2998802496   -0.2520598913   -0.2393978475   -0.0740288563   -0.0765422662 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##   -0.2393336867   -0.2379725493   -0.2102740187   -0.2068602535   -0.1238684669 
+    ##   -0.2394002954   -0.2379954877   -0.2101622791   -0.2067910575   -0.1241007495 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##   -0.1743708911   -0.1668884971   -0.1198521019   -0.1465998170   -0.0812665818 
+    ##   -0.1745598419   -0.1670796551   -0.1197270166   -0.1465014745   -0.0814533718 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##   -0.2133118488   -0.1379065883   -0.2479709457
+    ##   -0.2132481504   -0.1380382641   -0.2477798647
 
 ``` r
 pc2 <- pca$rotation[, 2]
@@ -166,23 +180,23 @@ pc2
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##     0.008229544     0.025154303    -0.302072212     0.132369578     0.084388721 
+    ##     0.008093201     0.024866603    -0.302265875     0.133036994     0.084371147 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##     0.274858386     0.316735159    -0.177544483     0.124695068    -0.239702234 
+    ##     0.274526380     0.316509190    -0.177338898     0.124483178    -0.239434465 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##     0.046451946    -0.071807006    -0.031764850     0.070089271     0.001804887 
+    ##     0.047242354    -0.072037142    -0.031801400     0.070104565     0.001781529 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##     0.037530614    -0.108632785     0.166371704     0.003848704    -0.008176325 
+    ##     0.037530607    -0.108601969     0.166454069     0.003709114    -0.008387688 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##     0.159966530    -0.338672020     0.098603795     0.041321588    -0.147209737 
+    ##     0.160038194    -0.338814126     0.098377219     0.041200109    -0.147541566 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##    -0.075582357    -0.059985441    -0.099951216    -0.278630463    -0.289626927 
+    ##    -0.076328842    -0.060422390    -0.100476045    -0.278753652    -0.289747933 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##     0.016978015    -0.005219723    -0.020993061     0.008195159     0.224811902 
+    ##     0.016693261    -0.005611984    -0.021097180     0.008074360     0.224529869 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##     0.154785859     0.188029191    -0.149428426    -0.109689812     0.152621746 
+    ##     0.154532789     0.187831955    -0.149386934    -0.109607878     0.152575475 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##    -0.053685910     0.133881667    -0.073864587
+    ##    -0.053767182     0.133413899    -0.074140031
 
 ``` r
 pca3 <- pca$rotation[, 3]
@@ -349,3 +363,21 @@ ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
+
+## Discussion
+
+### Looking at PCA (Principal Component Analysis)
+
+PC1 seems to be a case of an “Usage” (-) vs “Non-Usage” (+) battle. In
+the negative side, we see characteristics such as ptsPerGame,
+fgmPerGame, fg2mPerGame, fg2aPerGame. The other types of variables do
+not tend to take on positive values, but the ones that are include:
+pctBLK, pctSTL, pctTOV.
+
+Looking at PC2, I would describe this as “Shooters” (-) vs “Baseline”
+(+). We see negative values for shooting characteristics, such as
+pct3PRate, fg3mPerGame, fg3aPerGame, and positive values for
+characteristics typical for tall, big players:pctDRB, pctTRB,
+blkPerGame.
+
+## References
