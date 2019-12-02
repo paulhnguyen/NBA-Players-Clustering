@@ -657,7 +657,8 @@ Using Hierarchical clustering, we were able to break down players into 3
 "types": 
 Cluster 1: lower usage, spread in shootting/baseline, and spread in outside/
 inside the arc
-Cluster 2: spread in usage, 
+Cluster 2: spread in usage, shooters, 
+Cluster3: high usage, baseline, 
 
 
 
