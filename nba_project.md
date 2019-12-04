@@ -693,15 +693,16 @@ n_clusters_hier<-hclust(dist(n_pcas))
 n_clusters_hier_plot<-plot(n_clusters_hier,
                            xlab = "", ylab = "", sub = "", 
                            main = "Complete Linkage")
-```
-
-![](nba_project_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
-
-``` r
 n_clusters_hier_plot
 ```
 
     ## NULL
+
+``` r
+abline(h = 3.7, col = "tomato")
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
 n_clusters_hier_cut <- cutree(n_clusters_hier, 3)
@@ -872,7 +873,7 @@ PC1_all_nba_graph <-
   geom_col()+
   coord_flip()+
   theme(legend.position = "none") +
-  labs(title = "bigs(-) vs guards(+)")
+  labs(title = "Rebounders(-) vs Shooters(+)")
 PC1_all_nba_graph
 ```
 
@@ -884,7 +885,8 @@ PC2_all_nba_graph <-
                                           fill = variables)) +
   geom_col()+
   coord_flip()+
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(title = "Efficient (-) vs Not Efficient (+) ")
 PC2_all_nba_graph
 ```
 
@@ -896,7 +898,8 @@ PC3_all_nba_graph <-
                                           fill = variables)) +
   geom_col()+
   coord_flip()+
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(title = "Team (-) vs Scoring (+)")
 PC3_all_nba_graph
 ```
 
@@ -919,6 +922,7 @@ n_pcas_all_nba <- as_tibble(pca_all_nba$x[,1:3])
 n_clusters_kmeans_all_nba <-kmeans(n_pcas_all_nba, centers = 3)
 n_clusters_hier_all_nba <-hclust(dist(n_pcas_all_nba))
 n_clusters_hier_plot_all_nba<-plot(n_clusters_hier_all_nba)
+abline(h = 2.7, col = "tomato")
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
@@ -1118,7 +1122,7 @@ When we narrow our observations to just players that made the all-nba
 team, our first PC is the distinction between “Rebounders” (-) and
 “Shooters” (+) Negative variables include trbPerGame, pctTRB, pctDRB,
 orbPerGame. I would classify our second PCA as a battle between
-“Efficiency” (-) and “Not Efficient” (+). We don’t have many variables
+“Efficienct” (-) and “Not Efficient” (+). We don’t have many variables
 for the non-efficient side, mainly turnovers and blocks, but for the
 efficient aspect of the PC, high magnitude variables include ptsPerGame,
 VORP, ftmPerGame, and ftaPerGame. Our third PC, I would classify as
