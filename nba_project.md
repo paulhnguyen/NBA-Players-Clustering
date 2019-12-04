@@ -9,6 +9,7 @@ library(BBmisc)
 library(corrplot)
 library(gganimate)
 library(plotly)
+library(ggrepel)
 ```
 
 ## Abstract
@@ -464,23 +465,23 @@ pc1
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##   -0.1983625651   -0.1096560289    0.0450415240   -0.0645939906    0.0008473103 
+    ##   -0.1983061830   -0.1096064913    0.0452007471   -0.0646129334    0.0008937803 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##   -0.0703342253   -0.0610925823   -0.0726174793    0.0243398447    0.0213361996 
+    ##   -0.0702757316   -0.0610626870   -0.0726016531    0.0239927889    0.0214991273 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##    0.0473415150   -0.1558420993   -0.1733695953   -0.1601178810   -0.1980718041 
+    ##    0.0473313223   -0.1558860899   -0.1734037987   -0.1600705499   -0.1981229641 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##   -0.1545547328   -0.1716825298   -0.0541296497   -0.1727587240   -0.1730167817 
+    ##   -0.1545270332   -0.1715394959   -0.0540821228   -0.1726101788   -0.1728939245 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##   -0.0890130179   -0.0301497723   -0.0867476037   -0.0808641061   -0.0431294379 
+    ##   -0.0890477084   -0.0302145087   -0.0867391776   -0.0808642906   -0.0430378665 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##   -0.2998802496   -0.2520598913   -0.2393978475   -0.0740288563   -0.0765422662 
+    ##   -0.2998817966   -0.2521582981   -0.2394623998   -0.0740201830   -0.0764989387 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##   -0.2394002954   -0.2379954877   -0.2101622791   -0.2067910575   -0.1241007495 
+    ##   -0.2395452964   -0.2382176937   -0.2100880582   -0.2067378504   -0.1242250555 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##   -0.1745598419   -0.1670796551   -0.1197270166   -0.1465014745   -0.0814533718 
+    ##   -0.1744977937   -0.1670397668   -0.1197401727   -0.1464033871   -0.0814713225 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##   -0.2132481504   -0.1380382641   -0.2477798647
+    ##   -0.2132139623   -0.1380594900   -0.2477925561
 
 ``` r
 pc2 <- pca$rotation[, 2]
@@ -488,23 +489,23 @@ pc2
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##     0.008093201     0.024866603    -0.302265875     0.133036994     0.084371147 
+    ##     0.008281364     0.024772018    -0.301789833     0.133049025     0.084344670 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##     0.274526380     0.316509190    -0.177338898     0.124483178    -0.239434465 
+    ##     0.274559770     0.316574457    -0.177291326     0.124633251    -0.239428450 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##     0.047242354    -0.072037142    -0.031801400     0.070104565     0.001781529 
+    ##     0.047184928    -0.072064556    -0.031816371     0.070218531     0.001907947 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##     0.037530607    -0.108601969     0.166454069     0.003709114    -0.008387688 
+    ##     0.037692218    -0.108587222     0.166475807     0.003888253    -0.008196264 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##     0.160038194    -0.338814126     0.098377219     0.041200109    -0.147541566 
+    ##     0.159954162    -0.338762588     0.098367335     0.040984709    -0.147636302 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##    -0.076328842    -0.060422390    -0.100476045    -0.278753652    -0.289747933 
+    ##    -0.076531998    -0.060697469    -0.100618138    -0.278708806    -0.289723956 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##     0.016693261    -0.005611984    -0.021097180     0.008074360     0.224529869 
+    ##     0.016539741    -0.005631968    -0.021182823     0.008009530     0.224615985 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##     0.154532789     0.187831955    -0.149386934    -0.109607878     0.152575475 
+    ##     0.154576876     0.187920133    -0.149396057    -0.109656863     0.152568696 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##    -0.053767182     0.133413899    -0.074140031
+    ##    -0.053769620     0.133596698    -0.074400304
 
 ``` r
 pca3 <- pca$rotation[, 3]
@@ -583,7 +584,7 @@ PC3graph
 #lets now create a plot with some players that we will recognize
 currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .1) +
-  geom_text(data = subset(d, isAllNBA == TRUE & 
+  geom_text_repel(data = subset(d, isAllNBA == TRUE & 
                             yearSeason %in% 2017:2019 ),
             aes(label = namePlayer)) +
   ylab("Shooters vs Baseline") +
@@ -596,7 +597,7 @@ currentplayersplot
 ``` r
 famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .1) +
-  geom_text(data = subset(d, namePlayer %in% c("Lebron James", 
+  geom_text_repel(data = subset(d, namePlayer %in% c("Lebron James", 
                                                "Michael Jordan",
                                                "Stephen Curry",
                                                "Kobe Bryant",
@@ -628,7 +629,8 @@ allnbaplayerspca <- d %>%
 staticplot <- ggplot(data = allnbaplayerspca, 
                      mapping = aes(x = PC1, y = PC2)) +
   geom_point(alpha = .8, color = "purple") + 
-  geom_text(data = allnbaplayerspca, mapping = aes(label = namePlayer)) +
+  geom_text_repel(data = allnbaplayerspca, 
+                  mapping = aes(label = namePlayer)) +
   geom_point(data = d, mapping = aes(x = PC1, y = PC2), alpha = .1) +
   ylab("Shooters vs Baseline") +
   xlab("Usage vs Non-Usage")
@@ -641,43 +643,107 @@ staticplot
 #byseason
 byseasonplot <- staticplot + transition_time(yearSeason) +
   labs(title = "Season: {frame_time}")
-animate(byseasonplot, renderer = gifski_renderer(), nframes = 36, fps = 2)
+animate(byseasonplot, renderer = gifski_renderer(), nframes = 37, fps = 2)
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-4-1.gif)<!-- -->
 
 ``` r
 n_pcas <- as_tibble(pca$x[,1:3])
-n_clusters_kmeans<-kmeans(n_pcas, centers = 3)
-n_clusters_hier<-hclust(dist(n_pcas))
-n_clusters_hier_plot<-plot(n_clusters_hier)
+#choosing k for kmeans
+n_clusters_kmeans1<-kmeans(n_pcas, centers = 1, nstart = 20)
+n_clusters_kmeans2<-kmeans(n_pcas, centers = 2, nstart = 20)
+n_clusters_kmeans3<-kmeans(n_pcas, centers = 3, nstart = 20)
+n_clusters_kmeans4<-kmeans(n_pcas, centers = 4, nstart = 20)
+n_clusters_kmeans5<-kmeans(n_pcas, centers = 5, nstart = 20)
+n_clusters_kmeans6<-kmeans(n_pcas, centers = 6, nstart = 20)
+kmeansvariation <- data_frame("K" = 1:6,
+                              "SS" = c(n_clusters_kmeans1$tot.withinss,
+                                       n_clusters_kmeans2$tot.withinss,
+                                       n_clusters_kmeans3$tot.withinss,
+                                       n_clusters_kmeans4$tot.withinss,
+                                       n_clusters_kmeans5$tot.withinss,
+                                       n_clusters_kmeans6$tot.withinss))
+```
+
+    ## Warning: `data_frame()` is deprecated, use `tibble()`.
+    ## This warning is displayed once per session.
+
+``` r
+kmeansvariationplot <- 
+  ggplot(data = kmeansvariation, mapping = aes(x = K, y = SS)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "K means scree plot")
+kmeansvariationplot
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-n_clusters_hier_cut <- cutree(n_clusters_hier, 3)
+#does not seem to be a dinstinct elbow. We will decide on K=3, as it is
+#near the middle of complete aggregation and no aggregation, and because
+#generally, there seem to be three types of players
 
-n_pcas_kmeans <- n_pcas %>% mutate(cluster = n_clusters_kmeans$cluster)
-n_pcas_hier <- n_pcas %>% mutate(cluster = n_clusters_hier_cut)
 
-ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+n_pcasdist <- dist(n_pcas)
+distmatrix <- as.matrix(n_pcasdist)
+
+
+n_clusters_hier<-hclust(dist(n_pcas))
+n_clusters_hier_plot<-plot(n_clusters_hier,
+                           xlab = "", ylab = "", sub = "", 
+                           main = "Complete Linkage")
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-5-2.png)<!-- -->
 
 ``` r
-ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + geom_point()
+n_clusters_hier_plot
+```
+
+    ## NULL
+
+``` r
+n_clusters_hier_cut <- cutree(n_clusters_hier, 3)
+
+n_pcas_kmeans <- n_pcas %>% mutate(cluster = n_clusters_kmeans3$cluster)
+n_pcas_hier <- n_pcas %>% mutate(cluster = n_clusters_hier_cut)
+
+ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2,
+                          color = as.factor(cluster))) + 
+  geom_point(alpha = .6) +
+  labs(title = "kmeans clustering")
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-5-3.png)<!-- -->
 
 ``` r
+ggplot(n_pcas_hier, aes(x = PC1, y = PC2, 
+                        color = as.factor(cluster))) +
+  geom_point(alpha = .6) +
+  labs(title = "hierarchical clustering")
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
+
+``` r
+##note, this appears different in the md doc than in my rstudio
+
+
 #plot_ly(n_pcas_hier, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
 
 players_post1984_pca_clusters <- players_post1984 %>% 
   mutate(PC1 = pca$x[,1], PC2 = pca$x[,2], PC3 = pca$x[,3],
-         hier_cluster = n_clusters_hier_cut, kmeans_cluster = n_clusters_kmeans$cluster)
+         hier_cluster = n_clusters_hier_cut, kmeans_cluster = n_clusters_kmeans3$cluster)
+
+#what clusters do all-nba players end up in?
+allnbaclusterssummary <- players_post1984_pca_clusters%>%
+  filter(isAllNBA == TRUE) %>%
+  group_by(hier_cluster) %>%
+  summarize(n = n())
+
+
 players_post1984_pca_clusters_year <- players_post1984_pca_clusters %>% 
   group_by(yearSeason, hier_cluster) %>% count
 
@@ -695,14 +761,30 @@ cluster_proportions_2 = players_post1984_pca_clusters_year_2$n/players_post1984_
 cluster_proportions_3 = players_post1984_pca_clusters_year_3$n/players_post1984_pca_year$n
 cluster_proportions <- tibble(year = c(1984:2020), one = cluster_proportions_1, two = cluster_proportions_2, three = cluster_proportions_3)
 
-ggplot(cluster_proportions, aes(x = year, y = one), color = "red")+geom_line()+
-  geom_line(aes(x = year, y = two), color = "blue")+
-  geom_line(aes(x = year, y = three), color = "yellow")
+clusterdataframe <- data.frame(cluster1 = cluster_proportions_1,
+                               cluster2 = cluster_proportions_2,
+                               cluster3 = cluster_proportions_3,
+                               year = c(1984:2020))
+clusterdf <- data.frame(year = rep(c(1984:2020), 3),
+                        proportion = c(cluster_proportions_1,
+                                       cluster_proportions_2,
+                                       cluster_proportions_3),
+                        cluster = c(rep("Cluster 1", 37),
+                                    rep("Cluster 2", 37),
+                                    rep("Cluster 3", 37)))
+
+#maybe use this graph instead?
+ggplot(clusterdf, mapping = aes(x = year, y = proportion, color = cluster)) +
+  geom_line()
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-5-4.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-5-5.png)<!-- -->
 
 ``` r
+#ggplot(cluster_proportions, aes(x = year, y = one), color = "red")+geom_line()+
+ # geom_line(aes(x = year, y = two), color = "blue")+
+  #geom_line(aes(x = year, y = three), color = "yellow")
+
 players_post1984_pca_clusters_year
 ```
 
@@ -710,23 +792,23 @@ players_post1984_pca_clusters_year
     ## # Groups:   yearSeason, hier_cluster [111]
     ##    yearSeason hier_cluster     n
     ##         <dbl>        <int> <int>
-    ##  1       1984            1    78
-    ##  2       1984            2    44
-    ##  3       1984            3   112
-    ##  4       1985            1    61
-    ##  5       1985            2    45
-    ##  6       1985            3   133
-    ##  7       1986            1    65
-    ##  8       1986            2    66
-    ##  9       1986            3   108
-    ## 10       1987            1    72
+    ##  1       1984            1    22
+    ##  2       1984            2   181
+    ##  3       1984            3    31
+    ##  4       1985            1    22
+    ##  5       1985            2   192
+    ##  6       1985            3    25
+    ##  7       1986            1    31
+    ##  8       1986            2   188
+    ##  9       1986            3    20
+    ## 10       1987            1    32
     ## # … with 101 more rows
 
 ``` r
 pca_all_nba <- prcomp(players_post1984_all_nba_normalized[,-c(1:5, 49)])
 d_all_nba <- as.data.frame(pca_all_nba$x)
 
-ggplot(d, aes(x = PC1, y = PC2)) +
+ggplot(d_all_nba, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .7)
 ```
 
@@ -737,12 +819,25 @@ d2 <- tibble(PC = 1:43,
                 PVE = pca$sdev^2 /
                   sum(pca$sdev^2))
 
+d3 <- tibble(PC = 1:43,
+             PVE = pca_all_nba$sdev^2 / sum(pca_all_nba$sdev^2))
+
 ggplot(d2, aes(x = PC, y = PVE)) +
   geom_line() + 
-  geom_point()
+  geom_point() +
+  labs(title = "Skree Plot for NBA")
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+
+``` r
+ggplot(d3, aes(x = PC, y = PVE)) +
+  geom_line() + 
+  geom_point() +
+  labs(title = "Skree Plot for All-NBA")
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->
 
 ``` r
 pca_all_nba_rotations <- data.frame(pca_all_nba$rotation)
@@ -753,11 +848,12 @@ PC1_all_nba_graph <-
                                           fill = variables)) +
   geom_col()+
   coord_flip()+
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(title = "bigs(-) vs guards(+)")
 PC1_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->
 
 ``` r
 PC2_all_nba_graph <- 
@@ -769,7 +865,7 @@ PC2_all_nba_graph <-
 PC2_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->
 
 ``` r
 PC3_all_nba_graph <- 
@@ -781,7 +877,7 @@ PC3_all_nba_graph <-
 PC3_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->
 
 ``` r
 PC4_all_nba_graph <- 
@@ -793,7 +889,7 @@ PC4_all_nba_graph <-
 PC4_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->
 
 ``` r
 n_pcas_all_nba <- as_tibble(pca_all_nba$x[,1:3])
@@ -810,15 +906,19 @@ n_clusters_hier_cut_all_nba <- cutree(n_clusters_hier_all_nba, 3)
 n_pcas_kmeans_all_nba <- n_pcas_all_nba %>% mutate(cluster = n_clusters_kmeans_all_nba$cluster)
 n_pcas_hier_all_nba <- n_pcas_all_nba %>% mutate(cluster = n_clusters_hier_cut_all_nba)
 
-ggplot(n_pcas_kmeans_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point() +
-  labs(title = "kmeans clustering")
+ggplot(n_pcas_kmeans_all_nba, aes(x = PC1, y = PC2,
+                                  color = as.factor(cluster))) +
+  geom_point() +
+  labs(title = "all-nba kmeans clustering")
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-7-2.png)<!-- -->
 
 ``` r
-ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, color = cluster)) + geom_point() +
-  labs(title = "hierarchical clustering")
+ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, 
+                                color = as.factor(cluster))) + 
+  geom_point() +
+  labs(title = "all-nba hierarchical clustering")
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-7-3.png)<!-- -->
@@ -848,10 +948,21 @@ cluster_proportions_3_all_nba = players_post1984_pca_clusters_year_3_all_nba$n/p
 cluster_proportions_all_nba <- tibble(year = c(1984:2019), one = cluster_proportions_1_all_nba, two = cluster_proportions_2_all_nba, three = cluster_proportions_3_all_nba)
 
 #Red: first cluster, Blue: second cluster, Green: third cluster
-ggplot(cluster_proportions_all_nba, aes(x = year, y = one))+geom_line(color = "red")+
-  geom_line(aes(x = year, y = two), color = "blue")+
-  geom_line(aes(x = year, y = three), color = "green") +
-  labs(y ="Proportion")
+#ggplot(cluster_proportions_all_nba, aes(x = year, y = one))+geom_line(color = "red")+
+ # geom_line(aes(x = year, y = two), color = "blue")+
+  #geom_line(aes(x = year, y = three), color = "green") +
+  #labs(y ="Proportion")
+#new graph:
+allnbaclusterdf <- data.frame(year = rep(c(1984:2019), 3),
+                        proportion = c(cluster_proportions_1_all_nba,
+                                       cluster_proportions_2_all_nba,
+                                       cluster_proportions_3_all_nba),
+                        cluster = c(rep("Cluster 1", 36),
+                                    rep("Cluster 2", 36),
+                                    rep("Cluster 3", 36)))
+ggplot(allnbaclusterdf, mapping = aes(x = year, y = proportion, 
+                                      color = cluster)) + 
+  geom_line()
 ```
 
 ![](nba_project_files/figure-gfm/unnamed-chunk-7-4.png)<!-- -->
@@ -879,7 +990,8 @@ clustercounthierchallnba <- nbaclusters %>%
 #allnba kmean and hierarchical clusters over time
 kmeansclustergraphallnba <-
   ggplot(data = clustercountkmeansallnba, 
-         mapping = aes(x = yearSeason, y = count, color = kmeanscluster)) +
+         mapping = aes(x = yearSeason, y = count, color = 
+                         as.factor(kmeanscluster))) +
   geom_point() +
   ylim(-.5,7)
 kmeansclustergraphallnba
@@ -893,7 +1005,7 @@ kmeansclustergraphallnba
 hierarchicalgraphallnba <-
   ggplot(data = clustercounthierchallnba, 
          mapping = aes(x = yearSeason, y = count,
-                       color = hierarchicalcluster)) +
+                       color = as.factor(hierarchicalcluster))) +
   geom_point() +
   ylim(-.5,7)
 hierarchicalgraphallnba
@@ -904,27 +1016,42 @@ hierarchicalgraphallnba
 ![](nba_project_files/figure-gfm/unnamed-chunk-8-2.png)<!-- -->
 
 ``` r
-#all nba player's clusters over time
-n_pcas_kmeans <- n_pcas_kmeans %>%
-  mutate(yearSeason = d$yearSeason) 
-n_pcas_hier <- n_pcas_hier %>%
-    mutate(yearSeason = d$yearSeason) 
-nbakmeans <- 
-  ggplot(n_pcas_kmeans, aes(x = PC1, y = PC2, color = cluster)) +
+#all-nba player's clusters over time
+n_pcas_kmeans_all_nba <- n_pcas_kmeans_all_nba %>%
+  mutate(yearSeason = allnbaplayerspca$yearSeason) 
+n_pcas_hier_all_nba <- n_pcas_hier_all_nba %>%
+    mutate(yearSeason = allnbaplayerspca$yearSeason) 
+allnbakmeans <- 
+  ggplot(n_pcas_kmeans_all_nba, aes(x = PC1, y = PC2, 
+                                    color = as.factor(cluster)))+
   geom_point()+
   ylab("Shooters vs Baseline") +
-  xlab("Usage vs Non-Usage")
-nbahierch <- 
-  ggplot(n_pcas_hier, aes(x = PC1, y = PC2, color = cluster)) + 
+  xlab("Usage vs Non-Usage") +
+  labs(title = "All NBA teams over time - kmeans")
+allnbakmeans
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-8-3.png)<!-- -->
+
+``` r
+allnbahierch <- 
+  ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2, 
+                                  color = as.factor(cluster))) + 
   geom_point()+
   ylab("Shooters vs Baseline") +
-  xlab("Usage vs Non-Usage")
-  
-byseasonplotkmeans  <- nbakmeans + transition_time(yearSeason) +
+  xlab("Usage vs Non-Usage") +
+  labs(title = "All NBA teams over time - hierarchical")
+allnbahierch  
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-8-4.png)<!-- -->
+
+``` r
+byseasonplotkmeans  <- allnbakmeans + transition_time(yearSeason) +
   labs(title = "Season: {frame_time}") 
 animate(byseasonplotkmeans, 
         renderer = gifski_renderer(), nframes = 36, fps = 2)
-byseasonplothierch <- nbahierch + transition_time(yearSeason) +
+byseasonplothierch <- allnbahierch + transition_time(yearSeason) +
   labs(title = "Season: {frame_time}")
 animate(byseasonplothierch, 
         renderer = gifski_renderer(), nframes = 36, fps = 2)
@@ -938,9 +1065,9 @@ animate(byseasonplothierch,
 
 PC1 seems to be a case of an “Usage” (-) vs “Non-Usage” (+) battle. In
 the negative side, we see characteristics such as ptsPerGame,
-fgmPerGame, fg2mPerGame, fg2aPerGame. The other types of variables do
-not tend to take on positive values, but the ones that are include:
-pctBLK, pctSTL, pctTOV.  
+fgmPerGame, fg2mPerGame, fg2aPerGame, minutesPerGame. The other types of
+variables do not tend to take on positive values, but the ones that are
+include: pctBLK, pctSTL, pctTOV.  
 Looking at PC2, I would describe this as “Shooters” (-) vs “Baseline”
 (+). We see negative values for shooting characteristics, such as
 pct3PRate, fg3mPerGame, fg3aPerGame, and positive values for
@@ -953,9 +1080,9 @@ tovPerGame, pctUSG, pctBLK, and fg2aPerGame.
 ### Clustering
 
 Using Hierarchical clustering, we were able to break down players into 3
-“types”: Cluster 1: lower usage, spread in shootting/baseline, and
-spread in outside/ inside the arc Cluster 2: spread in usage, shooters,
-Cluster3: high usage, baseline,
+“types”: Cluster 1: very high usage Cluster 2: medium usage Cluster 3:
+low usage These clusters were mainly focused around PC1; there was
+plenty of variance in each cluster for PC2 and PC3.
 
 ### 
 
