@@ -558,7 +558,7 @@ PC2graph <-
   geom_col() +
   coord_flip() +
   theme(legend.position = "none")+
-  labs(title = "Shooters vs Baseline")
+  labs(title = "Shooters (-) vs Baseline(+)")
 PC2graph
 ```
 
@@ -571,7 +571,8 @@ PC3graph <-
                                           fill = variables)) +
   geom_col() +
   coord_flip() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") +
+  labs(title = "Outside the Arc (-) vs Inside the Arc (+)")
 PC3graph
 ```
 
@@ -587,6 +588,10 @@ currentplayersplot <- ggplot(d, aes(x = PC1, y = PC2)) +
   geom_text_repel(data = subset(d, isAllNBA == TRUE & 
                             yearSeason %in% 2017:2019 ),
             aes(label = namePlayer)) +
+  geom_point(data = subset(d, isAllNBA == TRUE & 
+                            yearSeason %in% 2017:2019), 
+             mapping = aes(x = PC1, y = PC2),
+             size = .5, alpha = .7, color = "purple2") +
   ylab("Shooters vs Baseline") +
   xlab("Usage vs Non-Usage")
 currentplayersplot
@@ -613,7 +618,7 @@ famousplayersplot <-  ggplot(d, aes(x = PC1, y = PC2)) +
                                                "Tim Duncan",
                                                "Magic Johnson",
                                                "Kevin Durant"),
-             size = .5, alpha = .8)) +
+             size = .5, alpha = .6)) +
   ylab("Shooters vs Baseline") +
   xlab("Usage vs Non-Usage")
 famousplayersplot
@@ -657,19 +662,13 @@ n_clusters_kmeans3<-kmeans(n_pcas, centers = 3, nstart = 20)
 n_clusters_kmeans4<-kmeans(n_pcas, centers = 4, nstart = 20)
 n_clusters_kmeans5<-kmeans(n_pcas, centers = 5, nstart = 20)
 n_clusters_kmeans6<-kmeans(n_pcas, centers = 6, nstart = 20)
-kmeansvariation <- data_frame("K" = 1:6,
+kmeansvariation <- tibble("K" = 1:6,
                               "SS" = c(n_clusters_kmeans1$tot.withinss,
                                        n_clusters_kmeans2$tot.withinss,
                                        n_clusters_kmeans3$tot.withinss,
                                        n_clusters_kmeans4$tot.withinss,
                                        n_clusters_kmeans5$tot.withinss,
                                        n_clusters_kmeans6$tot.withinss))
-```
-
-    ## Warning: `data_frame()` is deprecated, use `tibble()`.
-    ## This warning is displayed once per session.
-
-``` r
 kmeansvariationplot <- 
   ggplot(data = kmeansvariation, mapping = aes(x = K, y = SS)) +
   geom_line() +
@@ -737,11 +736,7 @@ players_post1984_pca_clusters <- players_post1984 %>%
   mutate(PC1 = pca$x[,1], PC2 = pca$x[,2], PC3 = pca$x[,3],
          hier_cluster = n_clusters_hier_cut, kmeans_cluster = n_clusters_kmeans3$cluster)
 
-#what clusters do all-nba players end up in?
-allnbaclusterssummary <- players_post1984_pca_clusters%>%
-  filter(isAllNBA == TRUE) %>%
-  group_by(hier_cluster) %>%
-  summarize(n = n())
+
 
 
 players_post1984_pca_clusters_year <- players_post1984_pca_clusters %>% 
@@ -805,6 +800,34 @@ players_post1984_pca_clusters_year
     ## # … with 101 more rows
 
 ``` r
+#what clusters do all-nba players end up in?
+allnbaclusterssummary <- players_post1984_pca_clusters%>%
+  filter(isAllNBA == TRUE) %>%
+  group_by(hier_cluster) %>%
+  summarize(n = n())
+allnbahierchdata <- players_post1984_pca_clusters%>%
+  filter(isAllNBA == TRUE)
+
+
+allnbaclusterstatic <- ggplot(data = allnbahierchdata, 
+       mapping = aes(x = PC1, y = PC2, color = as.factor(hier_cluster))) +
+  geom_point() +
+  geom_point(data = n_pcas_hier, 
+             mapping = aes(x = PC1, y = PC2, 
+                        color = as.factor(cluster)),
+             alpha = .1)
+allnbabyseasonplot <- allnbaclusterstatic+
+  transition_time(yearSeason) +
+  labs(title = "Season: {frame_time}")
+animate(allnbabyseasonplot,
+        renderer = gifski_renderer(), nframes = 36, fps = 2)
+```
+
+![](nba_project_files/figure-gfm/unnamed-chunk-6-1.gif)<!-- -->
+
+``` r
+#now for all-nba pca analysis
+
 pca_all_nba <- prcomp(players_post1984_all_nba_normalized[,-c(1:5, 49)])
 d_all_nba <- as.data.frame(pca_all_nba$x)
 
@@ -812,7 +835,7 @@ ggplot(d_all_nba, aes(x = PC1, y = PC2)) +
   geom_point(size = .5, alpha = .7)
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
 
 ``` r
 d2 <- tibble(PC = 1:43,
@@ -828,7 +851,7 @@ ggplot(d2, aes(x = PC, y = PVE)) +
   labs(title = "Skree Plot for NBA")
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-2.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->
 
 ``` r
 ggplot(d3, aes(x = PC, y = PVE)) +
@@ -837,7 +860,7 @@ ggplot(d3, aes(x = PC, y = PVE)) +
   labs(title = "Skree Plot for All-NBA")
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-3.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->
 
 ``` r
 pca_all_nba_rotations <- data.frame(pca_all_nba$rotation)
@@ -853,7 +876,7 @@ PC1_all_nba_graph <-
 PC1_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-4.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->
 
 ``` r
 PC2_all_nba_graph <- 
@@ -865,7 +888,7 @@ PC2_all_nba_graph <-
 PC2_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-5.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->
 
 ``` r
 PC3_all_nba_graph <- 
@@ -877,7 +900,7 @@ PC3_all_nba_graph <-
 PC3_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-6.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->
 
 ``` r
 PC4_all_nba_graph <- 
@@ -889,7 +912,7 @@ PC4_all_nba_graph <-
 PC4_all_nba_graph
 ```
 
-![](nba_project_files/figure-gfm/unnamed-chunk-6-7.png)<!-- -->
+![](nba_project_files/figure-gfm/unnamed-chunk-6-8.png)<!-- -->
 
 ``` r
 n_pcas_all_nba <- as_tibble(pca_all_nba$x[,1:3])
@@ -1080,9 +1103,43 @@ tovPerGame, pctUSG, pctBLK, and fg2aPerGame.
 ### Clustering
 
 Using Hierarchical clustering, we were able to break down players into 3
-“types”: Cluster 1: very high usage Cluster 2: medium usage Cluster 3:
-low usage These clusters were mainly focused around PC1; there was
-plenty of variance in each cluster for PC2 and PC3.
+“types”:
+
+Cluster 1: high usage, shooters, spread for outside/inside the arc
+
+Cluster 2: low usage, spread between shooters/baseline and
+outside/inside the arc
+
+Cluster 3: high usage, baseline players, spread for outside/inside arc
+
+### Looking at All-NBA
+
+When we narrow our observations to just players that made the all-nba
+team, our first PC is the distinction between “Rebounders” (-) and
+“Shooters” (+) Negative variables include trbPerGame, pctTRB, pctDRB,
+orbPerGame. I would classify our second PCA as a battle between
+“Efficiency” (-) and “Not Efficient” (+). We don’t have many variables
+for the non-efficient side, mainly turnovers and blocks, but for the
+efficient aspect of the PC, high magnitude variables include ptsPerGame,
+VORP, ftmPerGame, and ftaPerGame. Our third PC, I would classify as
+“Team” (-) vs “Scoring” (+) players. “Team” stats include ratioVORP,
+ratioBPM, pctAST, and astPerGame, whereas the “Scoring” variables
+include pstPerGAme, pctUSG, fgmPerGame, and fg2aPerGame.
+
+### Clustering for All-NBA
+
+It seems that all of the clusters have some spread in PC3, the “Team” vs
+“Scoring” principle component. Cluster 2 does have the more scoring
+players however. The different types:
+
+Cluster 1: Shooters, mixed efficiency, generally Scorers
+
+Cluster 2: Pretty diverse set of Rebounders and Shooters. Shooters tend
+to be scorers while Rebounders are Team players. Players are efficient.
+
+Cluster 3: Team Rebounders, however, not very efficient Remember though,
+all of these players are All-NBA players, so their stats are being
+compared to the best players each year in the NBA.
 
 ### 
 
