@@ -116,7 +116,7 @@ players_post1984 <- bref_players_stats(seasons = 1984:2020, tables = c("advanced
 # Filters by amount of time they played.
 ggplot(players_post1984, mapping = aes(x = minutes)) + 
    geom_histogram() +
-   geom_vline(xintercept = 600)
+   geom_vline(xintercept = 600, color = "tomato")
  players_post1984 <- filter(players_post1984, minutes > 600)
 
  # Variables to drop
@@ -428,6 +428,7 @@ staticplot
 #byseason
 byseasonplot <- staticplot + transition_time(yearSeason) +
   labs(title = "Season: {frame_time}")
+
 animate(byseasonplot, renderer = gifski_renderer(), nframes = 37, fps = 2)
 
 ```
@@ -483,7 +484,6 @@ ggplot(n_pcas_hier, aes(x = PC1, y = PC2,
                         color = as.factor(cluster))) +
   geom_point(alpha = .6) +
   labs(title = "hierarchical clustering")
-##note, this appears different in the md doc than in my rstudio
 
 
 #plot_ly(n_pcas_hier, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
@@ -758,6 +758,8 @@ byseasonplothierch <- allnbahierch + transition_time(yearSeason) +
 animate(byseasonplothierch, 
         renderer = gifski_renderer(), nframes = 36, fps = 2)
 
+
+
 ```
 
 
@@ -773,8 +775,8 @@ of variables do not tend to take on positive values, but the ones
 that are include:
 pctBLK, pctSTL, pctTOV.  
 Looking at PC2, I would describe this as "Shooters" (-) vs "Baseline" (+).
-We see negative values for shooting characteristics, such as pct3PRate, 
-fg3mPerGame, fg3aPerGame, and positive values for characteristics 
+We see positive values for shooting characteristics, such as pct3PRate, 
+fg3mPerGame, fg3aPerGame, and negative values for characteristics 
 typical for tall, big players:pctDRB, pctTRB, blkPerGame.
 PC3 is the distinction between "Outside the Arc" (-) and "Inside the Arc" (+)
 Extreme negative values appear for pctTrueShooting, pctEFG, pct3PRate. On 
@@ -795,7 +797,7 @@ Cluster 3: high usage, baseline players, spread for outside/inside arc
 When we narrow our observations to just players that made the all-nba team,
 our first PC is the distinction between "Rebounders" (-) and "Shooters" (+)
 Negative variables include trbPerGame, pctTRB, pctDRB, orbPerGame.
-I would classify our second PCA as a battle between "Efficienct" (-) and
+I would classify our second PCA as a battle between "Efficient" (-) and
 "Not Efficient" (+). We don't have many variables for the non-efficient
 side, mainly turnovers and blocks, but for the efficient aspect of the PC,
 high magnitude variables include ptsPerGame, VORP, ftmPerGame, and
