@@ -434,6 +434,7 @@ animate(byseasonplot, renderer = gifski_renderer(), nframes = 37, fps = 2)
 ```
 
 ```{r, cache = TRUE}
+set.seed(13)
 n_pcas <- as_tibble(pca$x[,1:3])
 #choosing k for kmeans
 n_clusters_kmeans1<-kmeans(n_pcas, centers = 1, nstart = 20)
@@ -486,7 +487,7 @@ ggplot(n_pcas_hier, aes(x = PC1, y = PC2,
   labs(title = "hierarchical clustering")
 
 
-#plot_ly(n_pcas_hier, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
+#plot_ly(n_pcas_kmeans, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
 
 players_post1984_pca_clusters <- players_post1984 %>% 
   mutate(PC1 = pca$x[,1], PC2 = pca$x[,2], PC3 = pca$x[,3],
@@ -496,16 +497,16 @@ players_post1984_pca_clusters <- players_post1984 %>%
 
 
 players_post1984_pca_clusters_year <- players_post1984_pca_clusters %>% 
-  group_by(yearSeason, hier_cluster) %>% count
+  group_by(yearSeason, kmeans_cluster) %>% count
 
 players_post1984_pca_year <- players_post1984_pca_clusters %>% 
   group_by(yearSeason) %>% count
 players_post1984_pca_clusters_year_1 <- players_post1984_pca_clusters_year %>%
-  filter(hier_cluster == 1)
+  filter(kmeans_cluster == 1)
 players_post1984_pca_clusters_year_2 <- players_post1984_pca_clusters_year %>%
-  filter(hier_cluster == 2)
+  filter(kmeans_cluster == 2)
 players_post1984_pca_clusters_year_3 <- players_post1984_pca_clusters_year %>%
-  filter(hier_cluster == 3)
+  filter(kmeans_cluster == 3)
 
 cluster_proportions_1 = players_post1984_pca_clusters_year_1$n/players_post1984_pca_year$n
 cluster_proportions_2 = players_post1984_pca_clusters_year_2$n/players_post1984_pca_year$n
@@ -524,9 +525,13 @@ clusterdf <- data.frame(year = rep(c(1984:2020), 3),
                                     rep("Cluster 2", 37),
                                     rep("Cluster 3", 37)))
 
+
+
 #maybe use this graph instead?
 ggplot(clusterdf, mapping = aes(x = year, y = proportion, color = cluster)) +
   geom_line()
+
+
 
 #ggplot(cluster_proportions, aes(x = year, y = one), color = "red")+geom_line()+
  # geom_line(aes(x = year, y = two), color = "blue")+
@@ -648,6 +653,7 @@ ggplot(n_pcas_hier_all_nba, aes(x = PC1, y = PC2,
   labs(title = "all-nba hierarchical clustering")
 
 #plot_ly(n_pcas_hier_all_nba, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
+
 
 players_post1984_pca_clusters_all_nba <- players_post1984_all_nba_normalized %>% 
   mutate(PC1 = pca_all_nba$x[,1], PC2 = pca_all_nba$x[,2], PC3 = pca_all_nba$x[,3],
