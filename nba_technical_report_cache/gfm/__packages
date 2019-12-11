@@ -1,0 +1,16 @@
+base
+nbastatR
+tidyverse
+ggplot2
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+BBmisc
+corrplot
+gganimate
+plotly
+ggrepel

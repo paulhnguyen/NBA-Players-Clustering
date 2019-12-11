@@ -466,23 +466,23 @@ pc1
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##   -0.1984170030   -0.1098251655    0.0457894087   -0.0653791751    0.0008296429 
+    ##   -0.1984376111   -0.1098107324    0.0460597436   -0.0655952774    0.0008030325 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##   -0.0708471347   -0.0617375414   -0.0725301436    0.0238124679    0.0219014529 
+    ##   -0.0711980473   -0.0621075328   -0.0723587287    0.0237211222    0.0221780468 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##    0.0469486995   -0.1559844693   -0.1735141039   -0.1599903992   -0.1981977758 
+    ##    0.0468887522   -0.1559581240   -0.1734981531   -0.1601448301   -0.1982549458 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##   -0.1546449814   -0.1714358310   -0.0542357833   -0.1724266162   -0.1729094230 
+    ##   -0.1547083585   -0.1712344327   -0.0544363909   -0.1723823961   -0.1729173372 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##   -0.0892980629   -0.0296739705   -0.0870225890   -0.0810719726   -0.0436442204 
+    ##   -0.0893714820   -0.0294037491   -0.0870310482   -0.0810320502   -0.0435988296 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##   -0.2996746855   -0.2520668299   -0.2392597403   -0.0736958096   -0.0760735708 
+    ##   -0.2995076369   -0.2519943955   -0.2391536508   -0.0734615581   -0.0758321887 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##   -0.2396351958   -0.2383603309   -0.2097406616   -0.2065354032   -0.1245996424 
+    ##   -0.2396507263   -0.2383883046   -0.2097019488   -0.2065264117   -0.1248515952 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##   -0.1747619007   -0.1673664685   -0.1195779000   -0.1460398184   -0.0817928380 
+    ##   -0.1749991672   -0.1676084771   -0.1194331543   -0.1458057990   -0.0820251513 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##   -0.2129638577   -0.1379736128   -0.2475416157
+    ##   -0.2129035686   -0.1381044037   -0.2474357260
 
 ``` r
 pc2 <- pca$rotation[, 2]
@@ -490,23 +490,23 @@ pc2
 ```
 
     ##        ratioPER pctTrueShooting       pct3PRate       pctFTRate          pctORB 
-    ##     0.008191871     0.024748503    -0.302846306     0.132760494     0.083987925 
+    ##    0.0080525182    0.0246156367   -0.3018678081    0.1327272515    0.0838685970 
     ##          pctDRB          pctTRB          pctAST          pctSTL          pctBLK 
-    ##     0.273996670     0.316031526    -0.176986740     0.124383514    -0.238601597 
+    ##    0.2740469286    0.3160639489   -0.1770599222    0.1245349511   -0.2389054402 
     ##          pctTOV          pctUSG        ratioOWS        ratioDWS         ratioWS 
-    ##     0.046919899    -0.072367036    -0.032279075     0.069300408     0.000978460 
+    ##    0.0471613326   -0.0725192177   -0.0324444847    0.0691699026    0.0008569979 
     ##    ratioWSPer48       ratioOBPM       ratioDBPM        ratioBPM       ratioVORP 
-    ##     0.036979806    -0.108603095     0.166393788     0.003523136    -0.008902242 
+    ##    0.0368879231   -0.1089040051    0.1664263458    0.0033287881   -0.0090401315 
     ##           pctFG          pctFG3          pctFG2          pctEFG           pctFT 
-    ##     0.160328184    -0.339221194     0.098310649     0.041026647    -0.148400102 
+    ##    0.1602012479   -0.3392848612    0.0982034344    0.0408993365   -0.1483455277 
     ##  minutesPerGame      fgmPerGame      fgaPerGame     fg3mPerGame     fg3aPerGame 
-    ##    -0.076619320    -0.060939806    -0.101065469    -0.279414508    -0.290015636 
+    ##   -0.0771437794   -0.0611838259   -0.1013206731   -0.2794347058   -0.2900437638 
     ##     fg2mPerGame     fg2aPerGame      ftmPerGame      ftaPerGame      orbPerGame 
-    ##     0.016448699    -0.005909921    -0.021397230     0.007780478     0.224691897 
+    ##    0.0162711757   -0.0061190151   -0.0216692786    0.0075270458    0.2247002604 
     ##      drbPerGame      trbPerGame      astPerGame      stlPerGame      blkPerGame 
-    ##     0.153827914     0.187210404    -0.149347458    -0.109547155     0.152157009 
+    ##    0.1537876212    0.1871573170   -0.1495044038   -0.1097330759    0.1523015704 
     ##      tovPerGame       pfPerGame      ptsPerGame 
-    ##    -0.054004976     0.133903897    -0.074649155
+    ##   -0.0542167979    0.1336944653   -0.0749548282
 
 ``` r
 pca3 <- pca$rotation[, 3]
@@ -665,13 +665,6 @@ n_clusters_kmeans3<-kmeans(n_pcas, centers = 3, nstart = 20)
 n_clusters_kmeans4<-kmeans(n_pcas, centers = 4, nstart = 20)
 n_clusters_kmeans5<-kmeans(n_pcas, centers = 5, nstart = 20)
 n_clusters_kmeans6<-kmeans(n_pcas, centers = 6, nstart = 20)
-```
-
-    ## Warning: Quick-TRANSfer stage steps exceeded maximum (= 516050)
-    
-    ## Warning: Quick-TRANSfer stage steps exceeded maximum (= 516050)
-
-``` r
 kmeansvariation <- tibble("K" = 1:6,
                               "SS" = c(n_clusters_kmeans1$tot.withinss,
                                        n_clusters_kmeans2$tot.withinss,

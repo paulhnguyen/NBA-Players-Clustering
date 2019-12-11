@@ -151,6 +151,8 @@ players_post1984_all_nba_normalized <- players_post1984_normalized %>% filter(is
 
 ## Exploratory Data Analysis
 
+For our exploratory data analysis we ploted our stats variables against season, grouped by "standard" positions.
+
 ```{r}
 #some summary statistics
 summarystatistics1984 <- players_post1984 %>%
@@ -832,10 +834,4 @@ are being compared to the best players each year in the NBA.
 
 ## References
 
-```{r}
-animate(byseasonplot, renderer = gifski_renderer(), nframes = 37, fps = 2)
-plot_ly(n_pcas_kmeans, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
-plot_ly(n_pcas_hier, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster)
-plot_ly(n_pcas_hier_all_nba, x = ~PC1, y = ~PC2, z = ~PC3, color = ~cluster, type = "scatter3d")
-```
 
