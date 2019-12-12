@@ -14,7 +14,7 @@ library(ggrepel)
 
 ## Abstract
 
-In this project, my group will describe the changes in playstyle types
+In this project, our group will describe the changes in playstyle types
 throughout the NBA’s history. We will perform PCA analysis to determine
 the essential traits for different players, and then use important
 principal components and unsupervised learning techinques to cluster
@@ -1070,19 +1070,19 @@ animate(byseasonplothierch,
 
 ### Looking at PCA (Principal Component Analysis)
 
-PC1 seems to be a case of an “Usage” (-) vs “Non-Usage” (+) battle. In
-the negative side, we see characteristics such as ptsPerGame,
-fgmPerGame, fg2mPerGame, fg2aPerGame, minutesPerGame. The other types of
-variables do not tend to take on positive values, but the ones that are
-include: pctBLK, pctSTL, pctTOV.  
-Looking at PC2, I would describe this as “Shooters” (-) vs “Baseline”
-(+). We see positive values for shooting characteristics, such as
-pct3PRate, fg3mPerGame, fg3aPerGame, and negative values for
-characteristics typical for tall, big players:pctDRB, pctTRB,
-blkPerGame. PC3 is the distinction between “Outside the Arc” (-) and
-“Inside the Arc” (+) Extreme negative values appear for
-pctTrueShooting, pctEFG, pct3PRate. On the positive side, we see
-tovPerGame, pctUSG, pctBLK, and fg2aPerGame.
+  - PC1 seems to be a case of an “Usage” (-) vs “Non-Usage” (+) battle.
+    In the negative side, we see characteristics such as ptsPerGame,
+    fgmPerGame, fg2mPerGame, fg2aPerGame, minutesPerGame. The other
+    types of variables do not tend to take on positive values, but the
+    ones that are include: pctBLK, pctSTL, pctTOV.  
+  - PC2 could be classified as “Shooters” (-) vs “Baseline” (+). We see
+    positive values for shooting characteristics, such as pct3PRate,
+    fg3mPerGame, fg3aPerGame, and negative values for characteristics
+    typical for tall, big players:pctDRB, pctTRB, blkPerGame.
+  - PC3 is the distinction between “Outside the Arc” (-) and “Inside the
+    Arc” (+) Extreme negative values appear for pctTrueShooting, pctEFG,
+    pct3PRate. On the positive side, we see tovPerGame, pctUSG, pctBLK,
+    and fg2aPerGame.
 
 ### Clustering
 
@@ -1094,11 +1094,9 @@ into high, medium, and low usage. We felt that this was not indicative
 of the types of players they were, so we used K-means to look at the
 actual characteristics of the players. The three types we created were:
 
-Cluster 1: low usage shooters
-
-Cluster 2: low usage baseline players
-
-Cluster 3: high usage players with a spread for baseline/shooting
+  - Cluster 1: low usage shooters  
+  - Cluster 2: low usage baseline players  
+  - Cluster 3: high usage players with a spread for baseline/shooting
 
 We found that both hierarchical and k-means clustering did not seperate
 players into clusters based on our third principle component, outside
@@ -1111,17 +1109,19 @@ found in 1984.
 ### Looking at All-NBA
 
 When we narrow our observations to just the 15 players that were voted
-into the all-nba team each season, our first PC is the distinction
-between “Rebounders” (-) and “Shooters” (+). Negative variables include
-trbPerGame, pctTRB, pctDRB, orbPerGame. I would classify our second PCA
-as a battle between “Efficient” (-) and “Not Efficient” (+). We don’t
-have many variables for the non-efficient side, mainly turnovers and
-blocks, but for the efficient aspect of the principle component, high
-magnitude variables include ptsPerGame, VORP, ftmPerGame, and
-ftaPerGame. Our third PC, I would classify as “Team” (-) vs “Scoring”
-(+) players. “Team” stats include ratioVORP, ratioBPM, pctAST, and
-astPerGame, whereas the “Scoring” variables include pstPerGAme, pctUSG,
-fgmPerGame, and fg2aPerGame.
+into the all-nba team each season.
+
+  - PC1 is the distinction between “Rebounders” (-) and “Shooters” (+).
+    Negative variables include trbPerGame, pctTRB, pctDRB, orbPerGame.
+  - PC2 could be classified a battle between “Efficient” (-) and “Not
+    Efficient” (+) players. We don’t have many variables for the
+    non-efficient side, mainly turnovers and blocks, but for the
+    efficient aspect of the principle component, high magnitude
+    variables include ptsPerGame, VORP, ftmPerGame, and ftaPerGame.  
+  - PC3, I would classify as “Team” (-) vs “Scoring” (+) players. “Team”
+    stats include ratioVORP, ratioBPM, pctAST, and astPerGame, whereas
+    the “Scoring” variables include pstPerGAme, pctUSG, fgmPerGame, and
+    fg2aPerGame.
 
 ### Clustering for All-NBA
 
@@ -1129,18 +1129,18 @@ It seems that all of the clusters have some spread in PC3, the “Team” vs
 “Scoring” principle component. Cluster 2 does have the more scoring
 players however. The different types:
 
-Cluster 1: Shooters, mixed efficiency, generally Scorers. Some examples
-for these type of players would be Stephen Curry, Damian Lillard, Lebron
-James.
-
-Cluster 2: Pretty diverse set of Rebounders and Shooters. Shooters tend
-to be scorers while Rebounders are Team players. Players are efficient.
-An example for this type of player is Giannis Antetokounmpo
-
-Cluster 3: Team Rebounders, however, not very efficient Remember though,
-all of these players are All-NBA players, so their stats are being
-compared to the best players each year in the NBA. Some players
-representing this cluster are Draymond Green and Rudy Gobert.
+  - Cluster 1: Shooters, mixed efficiency, generally Scorers. Some
+    examples for these type of players would be Stephen Curry, Damian
+    Lillard, Lebron James.  
+  - Cluster 2: Pretty diverse set of Rebounders and Shooters. Shooters
+    tend to be scorers while Rebounders are Team players. Players are
+    efficient. An example for this type of player is Giannis
+    Antetokounmpo.  
+  - Cluster 3: Team Rebounders, however, not very efficient Remember
+    though, all of these players are All-NBA players, so their stats are
+    being compared to the best players each year in the NBA. Some
+    players representing this cluster are Draymond Green and Rudy
+    Gobert.
 
 We find that the proportion of shooting focused players among All-NBA
 teams remains the highest in each season since 1984, and that in recent
@@ -1170,9 +1170,7 @@ optimal in the league? What types of players should managers try to pick
 up with a limited salary, limited number of players on a team, and
 limited touches for each player? There is only one basketball after all.
 
-### 
-
-## References
+### References
 
 To obtain data for this project, we used a package “nbastatR”, developed
 by Alex Bresler, which took data from the websites
