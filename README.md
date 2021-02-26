@@ -1,4 +1,4 @@
-# [NBA Player Positions](https://github.com/stat-learning/group-9/blob/master/nba_technical_report.md)
+# [NBA Player Positions]
 
 ### Paul Nguyen & David Herrero Quevedo
 
