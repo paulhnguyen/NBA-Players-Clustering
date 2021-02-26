@@ -10,3 +10,4 @@ principal components and unsupervised learning techinques to cluster
 players into different "types" and see the movement in the proportions of
 types over time. 
 
+Final Project for Statistical Learning Fall 2019
